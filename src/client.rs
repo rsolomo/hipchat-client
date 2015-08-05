@@ -1,8 +1,9 @@
 use std::io::prelude::*;
 use hyper::Client as HyperClient;
-use hyper::header::{Authorization, Bearer, Location};
+use hyper::header::{Authorization, Bearer, ContentType};
 use hyper::status::StatusClass;
 use emoticon::Emoticon;
+use error::Error;
 use room::{RoomDetail, RoomMessage, RoomUpdate, Rooms, RoomsRequest, Notification};
 use rustc_serialize::json;
 use rustc_serialize::json::Json;
@@ -15,7 +16,7 @@ pub struct Client {
 }
 
 impl Client {
-    /// Creates a new HipChat client
+    /// Creates a new HipChat API v2 client
     pub fn new<T: Into<String>, O: AsRef<str>>(origin: O, token: T) -> Self {
         Client {
             base_url: format!("{}/v2", origin.as_ref()),
@@ -23,66 +24,64 @@ impl Client {
             hyper_client: HyperClient::new()
         }
     }
-
-    pub fn get_emoticon<T: AsRef<str>>(&self, emoticon_id_or_shortcut: T) -> Emoticon {
-        let mut res = self.hyper_client.get(&format!("{}/emoticon/{}", self.base_url, emoticon_id_or_shortcut.as_ref()))
+    /// [Get emoticon](https://www.hipchat.com/docs/apiv2/method/get_emoticon)
+    pub fn get_emoticon<T: AsRef<str>>(&self, emoticon_id_or_shortcut: T) -> Result<Emoticon, Error> {
+        let mut res = try!(self.hyper_client.get(&format!("{}/emoticon/{}", self.base_url, emoticon_id_or_shortcut.as_ref()))
             .header(self.auth.to_owned())
-            .send()
-            .unwrap();
+            .send());
 
         if res.status.class() != StatusClass::Success {
-            panic!("{}", res.status);
+            return Err(Error::HttpStatus(res.status));
         }
 
         let mut body = String::new();
-        res.read_to_string(&mut body).unwrap();
-        json::decode(&body).unwrap()
+        try!(res.read_to_string(&mut body));
+        Ok(try!(json::decode(&body)))
     }
-    /// Retrieves details of a room
-    pub fn get_room<T: AsRef<str>>(&self, room_id_or_name: T) -> RoomDetail {
-        let mut res = self.hyper_client.get(&format!("{}/room/{}", self.base_url, room_id_or_name.as_ref()))
+    /// [Get room](https://www.hipchat.com/docs/apiv2/method/get_room)
+    pub fn get_room<T: AsRef<str>>(&self, room_id_or_name: T) -> Result<RoomDetail, Error> {
+        let mut res = try!(self.hyper_client.get(&format!("{}/room/{}", self.base_url, room_id_or_name.as_ref()))
             .header(self.auth.to_owned())
-            .send()
-            .unwrap();
+            .send());
 
         if res.status.class() != StatusClass::Success {
-            panic!("{}", res.status);
+            return Err(Error::HttpStatus(res.status));
         }
 
         let mut body = String::new();
-        res.read_to_string(&mut body).unwrap();
-        json::decode(&body).unwrap()
+        try!(res.read_to_string(&mut body));
+        Ok(try!(json::decode(&body)))
     }
-    /// Updates a room
-    pub fn update_room<T: AsRef<str>>(&self, room_id_or_name: T, req: &RoomUpdate) -> RoomDetail {
+    /// [Update room](https://www.hipchat.com/docs/apiv2/method/update_room)
+    pub fn update_room<T: AsRef<str>>(&self, room_id_or_name: T, req: &RoomUpdate) -> Result<RoomDetail, Error> {
         let body = json::encode(req).unwrap();
-        let mut res = self.hyper_client.put(&format!("{}/room/{}", self.base_url, room_id_or_name.as_ref()))
+        let mut res = try!(self.hyper_client.put(&format!("{}/room/{}", self.base_url, room_id_or_name.as_ref()))
             .header(self.auth.to_owned())
+            .header(ContentType::json())
             .body(body.as_bytes())
-            .send()
-            .unwrap();
+            .send());
 
         if res.status.class() != StatusClass::Success {
-            panic!("{}", res.status);
+            return Err(Error::HttpStatus(res.status));
         }
 
         let mut body = String::new();
-        res.read_to_string(&mut body).unwrap();
-        json::decode(&body).unwrap()
+        try!(res.read_to_string(&mut body));
+        Ok(try!(json::decode(&body)))
     }
-    /// Deletes a room
-    pub fn delete_room<T: AsRef<str>>(&self, room_id_or_name: T) -> () {
-        let res = self.hyper_client.delete(&format!("{}/room/{}", self.base_url, room_id_or_name.as_ref()))
+    /// [Delete room](https://www.hipchat.com/docs/apiv2/method/delete_room)
+    pub fn delete_room<T: AsRef<str>>(&self, room_id_or_name: T) -> Result<(), Error> {
+        let res = try!(self.hyper_client.delete(&format!("{}/room/{}", self.base_url, room_id_or_name.as_ref()))
             .header(self.auth.to_owned())
-            .send()
-            .unwrap();
+            .send());
 
         if res.status.class() != StatusClass::Success {
-            panic!("{}", res.status);
+            return Err(Error::HttpStatus(res.status));
         }
+        Ok(())
     }
-    /// Retrieves a list of rooms
-    pub fn get_rooms(&self, req: Option<&RoomsRequest>) -> Rooms {
+    /// [Get all rooms](https://www.hipchat.com/docs/apiv2/method/get_all_rooms)
+    pub fn get_rooms(&self, req: Option<&RoomsRequest>) -> Result<Rooms, Error> {
         let mut pairs = Vec::new();
         if let Some(rooms_request) = req {
             if let Some(start_index) = rooms_request.start_index {
@@ -102,88 +101,50 @@ impl Client {
         let mut url = Url::parse(&format!("{}/room", self.base_url)).unwrap();
         url.query = Some(form_urlencoded::serialize(pairs));
 
-        let mut res = self.hyper_client.get(url)
+        let mut res = try!(self.hyper_client.get(url)
             .header(self.auth.to_owned())
-            .send()
-            .unwrap();
+            .send());
 
         if res.status.class() != StatusClass::Success {
-            panic!("{}", res.status);
+            return Err(Error::HttpStatus(res.status));
         }
 
         let mut body = String::new();
-        res.read_to_string(&mut body).unwrap();
-        json::decode(&body).unwrap()
-    }
-    /// Retrieves a room's avatar
-    pub fn get_room_avatar<T: AsRef<str>>(&self, room_id_or_name: T) -> String {
-        let res = self.hyper_client.get(&format!("{}/room/{}/avatar", self.base_url, room_id_or_name.as_ref()))
-            .header(self.auth.to_owned())
-            .send()
-            .unwrap();
-
-        match res.headers.get::<Location>() {
-            Some(location) => location.0.to_owned(),
-            None => panic!()
-        }
-    }
-    pub fn update_room_avatar<T: AsRef<str>, U: Into<String>>(&self, room_id_or_name: T, avatar: U) -> () {
-        let mut obj = json::Object::new();
-        obj.insert("avatar".to_owned(), Json::String(avatar.into()));
-        let body = Json::Object(obj).to_string();
-
-        let res = self.hyper_client.put(&format!("{}/room/{}", self.base_url, room_id_or_name.as_ref()))
-            .header(self.auth.to_owned())
-            .body(body.as_bytes())
-            .send()
-            .unwrap();
-
-        if res.status.class() != StatusClass::Success {
-            panic!("{}", res.status);
-        }
-
-    }
-    /// Delete a room's avatar
-    pub fn delete_room_avatar<T: AsRef<str>>(&self, room_id_or_name: T) {
-        let res = self.hyper_client.get(&format!("{}/room/{}/avatar", self.base_url, room_id_or_name.as_ref()))
-            .header(self.auth.to_owned())
-            .send()
-            .unwrap();
-
-        if res.status.class() != StatusClass::Success {
-            panic!("{}", res.status);
-        }
+        try!(res.read_to_string(&mut body));
+        Ok(try!(json::decode(&body)))
     }
     /// [Send message](https://www.hipchat.com/docs/apiv2/method/send_message)
-    pub fn send_message<T: AsRef<str>, U: Into<String>>(&self, room_id_or_name: T, message: U) -> RoomMessage {
+    pub fn send_message<T: AsRef<str>, U: Into<String>>(&self, room_id_or_name: T, message: U) -> Result<RoomMessage, Error> {
         let mut obj = json::Object::new();
         obj.insert("message".to_owned(), Json::String(message.into()));
         let body = Json::Object(obj).to_string();
 
-        let mut res = self.hyper_client.post(&format!("{}/room/{}/message", self.base_url, room_id_or_name.as_ref()))
+        let mut res = try!(self.hyper_client.post(&format!("{}/room/{}/message", self.base_url, room_id_or_name.as_ref()))
             .header(self.auth.to_owned())
+            .header(ContentType::json())
             .body(body.as_bytes())
-            .send()
-            .unwrap();
+            .send());
 
         if res.status.class() != StatusClass::Success {
-            panic!("{}", res.status);
+            return Err(Error::HttpStatus(res.status));
         }
 
         let mut body = String::new();
-        res.read_to_string(&mut body).unwrap();
-        json::decode(&body).unwrap()
+        try!(res.read_to_string(&mut body));
+        Ok(try!(json::decode(&body)))
     }
-    pub fn send_notification<T: AsRef<str>>(&self, room_id_or_name: T, notification: &Notification) -> () {
+    /// [Send room notification](https://www.hipchat.com/docs/apiv2/method/send_room_notification)
+    pub fn send_notification<T: AsRef<str>>(&self, room_id_or_name: T, notification: &Notification) -> Result<(), Error> {
         let body = json::encode(notification).unwrap();
-        let res = self.hyper_client.post(&format!("{}/room/{}/notification", self.base_url, room_id_or_name.as_ref()))
+        let res = try!(self.hyper_client.post(&format!("{}/room/{}/notification", self.base_url, room_id_or_name.as_ref()))
             .header(self.auth.to_owned())
+            .header(ContentType::json())
             .body(body.as_bytes())
-            .send()
-            .unwrap();
+            .send());
 
         if res.status.class() != StatusClass::Success {
-            panic!("{}", res.status);
+            return Err(Error::HttpStatus(res.status));
         }
+        Ok(())
     }
 }

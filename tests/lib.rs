@@ -5,7 +5,6 @@ extern crate rustc_serialize;
 use std::io::prelude::*;
 use std::fs::File;
 use hipchat_client::client::Client as HipchatClient;
-//use hipchat_client::room::RoomsRequest;
 use rustc_serialize::json;
 
 #[derive(RustcDecodable)]
@@ -29,7 +28,7 @@ fn setup() -> (HipchatClient, Config) {
 #[test]
 fn integration_get_room() {
     let (client, config) = setup();
-    let room = client.get_room(&config.room);
+    let room = client.get_room(&config.room).unwrap();
     println!("{:#?}", room);
     assert_eq!(room.name, config.room);
 }
@@ -37,7 +36,7 @@ fn integration_get_room() {
 #[test]
 fn integration_get_rooms() {
     let (client, config) = setup();
-    let rooms = client.get_rooms(None);
+    let rooms = client.get_rooms(None).unwrap();
     println!("{:#?}", rooms);
     assert!(rooms.items.iter().any(|r| r.name == config.room));
 }

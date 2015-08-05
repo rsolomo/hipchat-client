@@ -1,7 +1,7 @@
 use rustc_serialize::{Decodable, Decoder};
-use util::{Privacy, Color, MessageFormat};
+use util::{Color, MessageFormat, Privacy};
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[derive(Debug, Hash, Eq, PartialEq)]
 pub struct RoomsRequest {
     pub start_index: Option<u64>,
     pub max_results: Option<u64>,
@@ -10,7 +10,7 @@ pub struct RoomsRequest {
 }
 
 #[allow(non_snake_case)]
-#[derive(Debug, Clone, Hash, Eq, PartialEq, RustcDecodable)]
+#[derive(Debug, Hash, Eq, PartialEq, RustcDecodable)]
 pub struct Rooms {
     pub startIndex: u64,
     pub maxResults: u64,
@@ -18,7 +18,7 @@ pub struct Rooms {
     pub links: RoomsLinks
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[derive(Debug, Hash, Eq, PartialEq)]
 pub struct RoomsLinks {
     pub self_: String,
     pub prev: Option<String>,
@@ -37,14 +37,14 @@ impl Decodable for RoomsLinks {
     }
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq, RustcDecodable)]
+#[derive(Debug, Hash, Eq, PartialEq, RustcDecodable)]
 pub struct Room {
     pub name: String,
     pub id: u64,
     pub links: RoomDetailLinks
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq, RustcDecodable)]
+#[derive(Debug, Hash, Eq, PartialEq, RustcDecodable)]
 pub struct RoomDetail {
     pub xmpp_jid: String,
     pub statistics: RoomDetailStatistics,
@@ -60,12 +60,12 @@ pub struct RoomDetail {
     pub guest_access_url: Option<String>
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq, RustcDecodable)]
+#[derive(Debug, Hash, Eq, PartialEq, RustcDecodable)]
 pub struct RoomDetailStatistics {
     pub links: RoomDetailStatisticsLinks
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[derive(Debug, Hash, Eq, PartialEq)]
 pub struct RoomDetailStatisticsLinks {
     pub self_: String
 }
@@ -80,7 +80,7 @@ impl Decodable for RoomDetailStatisticsLinks {
     }
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[derive(Debug, Hash, Eq, PartialEq)]
 pub struct RoomDetailLinks {
     pub self_: String,
     pub webhooks: String,
@@ -101,7 +101,7 @@ impl Decodable for RoomDetailLinks {
     }
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq, RustcDecodable)]
+#[derive(Debug, Hash, Eq, PartialEq, RustcDecodable)]
 pub struct RoomDetailOwner {
     pub mention_name: String,
     pub id: u64,
@@ -109,7 +109,7 @@ pub struct RoomDetailOwner {
     pub name: String
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[derive(Debug, Hash, Eq, PartialEq)]
 pub struct RoomDetailOwnerLinks {
     pub self_: String
 }
@@ -122,11 +122,9 @@ impl Decodable for RoomDetailOwnerLinks {
             })
         })
     }
-
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq, RustcDecodable, RustcEncodable)]
-/// https://www.hipchat.com/docs/apiv2/method/update_room
+#[derive(Debug, Hash, Eq, PartialEq, RustcDecodable, RustcEncodable)]
 pub struct RoomUpdate {
     pub name: Option<String>,
     pub privacy: Option<Privacy>,
@@ -136,20 +134,20 @@ pub struct RoomUpdate {
     pub owner: Option<RoomUpdateOwner>
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq, RustcDecodable, RustcEncodable)]
+#[derive(Debug, Hash, Eq, PartialEq, RustcDecodable, RustcEncodable)]
 pub struct RoomUpdateOwner {
     pub id: Option<String>
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq, RustcDecodable, RustcEncodable)]
+#[derive(Debug, Hash, Eq, PartialEq, RustcDecodable, RustcEncodable)]
 pub struct RoomMessage {
     pub id: String,
     pub timestamp: String
 }
 
-#[derive(Debug, Default, Clone, Hash, Eq, PartialEq, RustcDecodable, RustcEncodable)]
+#[derive(Debug, Default, Hash, Eq, PartialEq, RustcDecodable, RustcEncodable)]
 pub struct Notification {
-    pub color: Color,
+    pub color: Option<Color>,
     pub message: String,
     pub notify: bool,
     pub message_format: MessageFormat
