@@ -3,7 +3,7 @@ use hyper::Client as HyperClient;
 use hyper::header::{Authorization, Bearer, Location};
 use hyper::status::StatusClass;
 use emoticon::Emoticon;
-use room::{RoomDetail, RoomUpdate, Rooms, RoomsRequest};
+use room::{RoomDetail, RoomMessage, RoomUpdate, Rooms, RoomsRequest, Notification};
 use rustc_serialize::json;
 use rustc_serialize::json::Json;
 use url::{form_urlencoded, Url};
@@ -147,6 +147,38 @@ impl Client {
     pub fn delete_room_avatar<T: AsRef<str>>(&self, room_id_or_name: T) {
         let res = self.hyper_client.get(&format!("{}/room/{}/avatar", self.base_url, room_id_or_name.as_ref()))
             .header(self.auth.to_owned())
+            .send()
+            .unwrap();
+
+        if res.status.class() != StatusClass::Success {
+            panic!("{}", res.status);
+        }
+    }
+    /// [Send message](https://www.hipchat.com/docs/apiv2/method/send_message)
+    pub fn send_message<T: AsRef<str>, U: Into<String>>(&self, room_id_or_name: T, message: U) -> RoomMessage {
+        let mut obj = json::Object::new();
+        obj.insert("message".to_owned(), Json::String(message.into()));
+        let body = Json::Object(obj).to_string();
+
+        let mut res = self.hyper_client.post(&format!("{}/room/{}/message", self.base_url, room_id_or_name.as_ref()))
+            .header(self.auth.to_owned())
+            .body(body.as_bytes())
+            .send()
+            .unwrap();
+
+        if res.status.class() != StatusClass::Success {
+            panic!("{}", res.status);
+        }
+
+        let mut body = String::new();
+        res.read_to_string(&mut body).unwrap();
+        json::decode(&body).unwrap()
+    }
+    pub fn send_notification<T: AsRef<str>>(&self, room_id_or_name: T, notification: &Notification) -> () {
+        let body = json::encode(notification).unwrap();
+        let res = self.hyper_client.post(&format!("{}/room/{}/notification", self.base_url, room_id_or_name.as_ref()))
+            .header(self.auth.to_owned())
+            .body(body.as_bytes())
             .send()
             .unwrap();
 

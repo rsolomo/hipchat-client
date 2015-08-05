@@ -1,6 +1,4 @@
-//use rustc_serialize::{Decodable, Decoder};
-
-#[derive(Debug, Hash, Eq, PartialEq, RustcDecodable)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq, RustcDecodable)]
 pub struct Emoticon {
     pub width: u64,
     pub audio_path: Option<String>,
