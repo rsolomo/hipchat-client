@@ -1,0 +1,9 @@
+[package]
+name = "hipchat-client"
+version = "0.1.0"
+authors = ["Ray Solomon <raybsolomon@gmail.com>"]
+
+[dependencies]
+rustc-serialize = "*"
+hyper = "*"
+url = "*"
