@@ -1,13 +1,17 @@
 use std::io::prelude::*;
+#[cfg(feature = "timeouts")]
+use std::time::Duration;
+
 use hyper::Client as HyperClient;
 use hyper::header::{Authorization, Bearer, ContentType};
 use hyper::status::StatusClass;
-use emoticon::Emoticon;
-use error::Error;
-use room::{RoomDetail, RoomMessage, RoomUpdate, Rooms, RoomsRequest, Notification};
 use rustc_serialize::json;
 use rustc_serialize::json::Json;
 use url::{form_urlencoded, Url};
+
+use emoticon::Emoticon;
+use error::Error;
+use room::{RoomDetail, RoomMessage, RoomUpdate, Rooms, RoomsRequest, Notification};
 
 pub struct Client {
     base_url: String,
@@ -22,6 +26,19 @@ impl Client {
             base_url: format!("{}/v2", origin.as_ref()),
             auth: Authorization(Bearer { token: token.into() }),
             hyper_client: HyperClient::new()
+        }
+    }
+    /// Creates a new HipChat API v2 client that has read and write timeouts
+    #[cfg(feature = "timeouts")]
+    pub fn with_timeouts<T: Into<String>, O: AsRef<str>>(origin: O, token: T, duration: Duration) -> Self {
+        let mut hyper_client = HyperClient::new();
+        hyper_client.set_read_timeout(Some(duration));
+        hyper_client.set_write_timeout(Some(duration));
+
+        Client {
+            base_url: format!("{}/v2", origin.as_ref()),
+            auth: Authorization(Bearer { token: token.into() }),
+            hyper_client: hyper_client
         }
     }
     /// [Get emoticon](https://www.hipchat.com/docs/apiv2/method/get_emoticon)

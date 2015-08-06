@@ -8,6 +8,9 @@ repository = "https://github.com/rsolomo/hipchat-client"
 homepage = "https://github.com/rsolomo/hipchat-client"
 description = "An API client library for HipChat"
 
+[features]
+timeouts = ["hyper/timeouts"]
+
 [dependencies]
 rustc-serialize = "*"
 hyper = "*"

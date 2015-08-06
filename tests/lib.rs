@@ -4,7 +4,7 @@ extern crate rustc_serialize;
 
 use std::io::prelude::*;
 use std::fs::File;
-use hipchat_client::client::Client as HipchatClient;
+use hipchat_client::Client as HipchatClient;
 use rustc_serialize::json;
 
 #[derive(RustcDecodable)]

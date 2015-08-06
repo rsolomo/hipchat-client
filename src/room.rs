@@ -1,4 +1,5 @@
 use rustc_serialize::{Decodable, Decoder};
+
 use util::{Color, MessageFormat, Privacy};
 
 #[derive(Debug, Hash, Eq, PartialEq)]
