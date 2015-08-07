@@ -146,12 +146,23 @@ pub struct RoomMessage {
     pub timestamp: String
 }
 
-#[derive(Debug, Default, Hash, Eq, PartialEq, RustcDecodable, RustcEncodable)]
+#[derive(Debug, Hash, Eq, PartialEq, RustcDecodable, RustcEncodable)]
 pub struct Notification {
-    pub color: Option<Color>,
+    pub color: Color,
     pub message: String,
     pub notify: bool,
     pub message_format: MessageFormat
+}
+
+impl Default for Notification {
+    fn default() -> Self {
+        Notification {
+            color: Color::default(),
+            message: String::default(),
+            notify: false,
+            message_format: MessageFormat::default()
+        }
+    }
 }
 
 #[cfg(test)]
