@@ -9,9 +9,12 @@ homepage = "https://github.com/rsolomo/hipchat-client"
 description = "An API client library for HipChat"
 
 [features]
-timeouts = ["hyper/timeouts"]
+default = ["hyper/timeouts"]
 
 [dependencies]
-rustc-serialize = "*"
+serde = "*"
+serde_json = "*"
+serde_macros = "*"
 hyper = "*"
 url = "*"
+

@@ -1,7 +1,9 @@
-#![cfg_attr(feature = "timeouts", feature(duration))]
+#![feature(custom_derive, plugin, duration, custom_attribute)]
+#![plugin(serde_macros)]
 
 extern crate hyper;
-extern crate rustc_serialize;
+extern crate serde;
+extern crate serde_json;
 extern crate url;
 
 pub mod client;

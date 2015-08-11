@@ -1,14 +1,29 @@
-use rustc_serialize::{Encodable, Decodable, Decoder, Encoder};
+use std::str::FromStr;
+
+use serde::de::{Deserialize, Deserializer, Error, Visitor};
+use serde::ser::{Serialize, Serializer};
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum Privacy {
-    Private,
-    Public
+    Public,
+    Private
 }
 
 impl Default for Privacy {
     fn default() -> Self {
         Privacy::Public
+    }
+}
+
+impl FromStr for Privacy {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "public" => Ok(Privacy::Public),
+            "private" => Ok(Privacy::Private),
+            _ => Err(())
+        }
     }
 }
 
@@ -21,21 +36,28 @@ impl AsRef<str> for Privacy {
     }
 }
 
-impl Encodable for Privacy {
-    fn encode<S: Encoder>(&self, s: &mut S) -> Result<(), S::Error> {
-        s.emit_str(self.as_ref())
+impl Serialize for Privacy {
+    fn serialize<S: Serializer>(&self, s: &mut S) -> Result<(), S::Error> {
+        s.visit_str(self.as_ref())
     }
 }
 
-impl Decodable for Privacy {
-    fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
-        d.read_str().and_then(|s| {
-            match &s[..] {
-                "public" => Ok(Privacy::Public),
-                "private" => Ok(Privacy::Private),
-                _ => Err(d.error(&format!("`{}` is not a valid privacy.", s)))
-            }
-        })
+impl Deserialize for Privacy {
+    fn deserialize<D: Deserializer>(d: &mut D) -> Result<Self, D::Error> {
+        d.visit_str(PrivacyVisitor)
+    }
+}
+
+struct PrivacyVisitor;
+
+impl Visitor for PrivacyVisitor {
+    type Value = Privacy;
+
+    fn visit_str<E: Error>(&mut self, s: &str) -> Result<Self::Value, E> {
+        match s.parse() {
+            Ok(x) => Ok(x),
+            Err(_) => Err(E::syntax("invalid value for privacy"))
+        }
     }
 }
 
@@ -55,6 +77,22 @@ impl Default for Color {
     }
 }
 
+impl FromStr for Color {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "yellow" => Ok(Color::Yellow),
+            "green" => Ok(Color::Green),
+            "red" => Ok(Color::Red),
+            "purple" => Ok(Color::Purple),
+            "gray" => Ok(Color::Gray),
+            "random" => Ok(Color::Random),
+            _ => Err(())
+        }
+    }
+}
+
 impl AsRef<str> for Color {
     fn as_ref(&self) -> &str {
         match *self {
@@ -68,25 +106,28 @@ impl AsRef<str> for Color {
     }
 }
 
-impl Encodable for Color {
-    fn encode<S: Encoder>(&self, s: &mut S) -> Result<(), S::Error> {
-        s.emit_str(self.as_ref())
+impl Serialize for Color {
+    fn serialize<S: Serializer>(&self, s: &mut S) -> Result<(), S::Error> {
+        s.visit_str(self.as_ref())
     }
 }
 
-impl Decodable for Color {
-    fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
-        d.read_str().and_then(|s| {
-            match &s[..] {
-                "yellow" => Ok(Color::Yellow),
-                "green" => Ok(Color::Green),
-                "red" => Ok(Color::Red),
-                "purple" => Ok(Color::Purple),
-                "gray" => Ok(Color::Gray),
-                "random" => Ok(Color::Random),
-                _ => Err(d.error(&format!("`{}` is not a valid color.", s)))
-            }
-        })
+impl Deserialize for Color {
+    fn deserialize<D: Deserializer>(d: &mut D) -> Result<Self, D::Error> {
+        d.visit_str(ColorVisitor)
+    }
+}
+
+struct ColorVisitor;
+
+impl Visitor for ColorVisitor {
+    type Value = Color;
+
+    fn visit_str<E: Error>(&mut self, s: &str) -> Result<Self::Value, E> {
+        match s.parse() {
+            Ok(x) => Ok(x),
+            Err(_) => Err(E::syntax("invalid value for color"))
+        }
     }
 }
 
@@ -102,6 +143,18 @@ impl Default for MessageFormat {
     }
 }
 
+impl FromStr for MessageFormat {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "html" => Ok(MessageFormat::Html),
+            "text" => Ok(MessageFormat::Text),
+            _ => Err(())
+        }
+    }
+}
+
 impl AsRef<str> for MessageFormat {
     fn as_ref(&self) -> &str {
         match *self {
@@ -111,20 +164,63 @@ impl AsRef<str> for MessageFormat {
     }
 }
 
-impl Encodable for MessageFormat {
-    fn encode<S: Encoder>(&self, s: &mut S) -> Result<(), S::Error> {
-        s.emit_str(self.as_ref())
+impl Serialize for MessageFormat {
+    fn serialize<S: Serializer>(&self, s: &mut S) -> Result<(), S::Error> {
+        s.visit_str(self.as_ref())
     }
 }
 
-impl Decodable for MessageFormat {
-    fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
-        d.read_str().and_then(|s| {
-            match &s[..] {
-                "html" => Ok(MessageFormat::Html),
-                "text" => Ok(MessageFormat::Text),
-                _ => Err(d.error(&format!("`{}` is not a valid message_format.", s)))
-            }
-        })
+impl Deserialize for MessageFormat {
+    fn deserialize<D: Deserializer>(d: &mut D) -> Result<Self, D::Error> {
+        d.visit_str(MessageFormatVisitor)
+    }
+}
+
+struct MessageFormatVisitor;
+
+impl Visitor for MessageFormatVisitor {
+    type Value = MessageFormat;
+
+    fn visit_str<E: Error>(&mut self, s: &str) -> Result<Self::Value, E> {
+        match s.parse() {
+            Ok(x) => Ok(x),
+            Err(_) => Err(E::syntax("invalid value for message_format"))
+        }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use serde_json;
+
+    #[test]
+    fn unit_deserialize_message_format_html() {
+        let expected = MessageFormat::Html;
+        let actual = serde_json::from_str::<MessageFormat>("\"html\"")
+            .unwrap_or_else(|e| panic!("{}", e));
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn unit_deserialize_message_format_text() {
+        let expected = MessageFormat::Text;
+        let actual = serde_json::from_str::<MessageFormat>("\"text\"")
+            .unwrap_or_else(|e| panic!("{}", e));
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn unit_serialize_message_format_text() {
+        let actual = serde_json::to_string(&MessageFormat::Text).unwrap();
+        let expected = "\"text\"";
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn unit_serialize_privacy_private() {
+        let actual = serde_json::to_string(&Privacy::Private).unwrap();
+        let expected = "\"private\"";
+        assert_eq!(actual, expected);
     }
 }

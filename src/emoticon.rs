@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, Hash, Eq, PartialEq, RustcDecodable)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
 pub struct Emoticon {
     pub width: u64,
     pub audio_path: Option<String>,
