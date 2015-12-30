@@ -8,8 +8,6 @@ repository = "https://github.com/rsolomo/hipchat-client"
 homepage = "https://github.com/rsolomo/hipchat-client"
 description = "An API client library for HipChat"
 
-[features]
-default = ["hyper/timeouts"]
 
 [dependencies]
 serde = "*"
@@ -17,4 +15,3 @@ serde_json = "*"
 serde_macros = "*"
 hyper = "*"
 url = "*"
-
