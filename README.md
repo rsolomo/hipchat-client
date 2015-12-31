@@ -1,6 +1,7 @@
 # hipchat-client
 
 [![Build Status](https://travis-ci.org/rsolomo/hipchat-client.svg?branch=master)](https://travis-ci.org/rsolomo/hipchat-client)
+[![](http://meritbadge.herokuapp.com/hipchat-client)](https://crates.io/crates/hipchat-client)
 
 [Documentation](http://rsolomo.github.io/hipchat-client/hipchat_client/index.html)
 
