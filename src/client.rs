@@ -12,6 +12,8 @@ use emoticon::Emoticon;
 use error::Error;
 use room::{RoomDetail, RoomMessage, RoomUpdate, Rooms, RoomsRequest, Notification};
 
+const DEFAULT_TIMEOUT: u64 = 120;
+
 pub struct Client {
     base_url: String,
     auth: Authorization<Bearer>,
@@ -21,11 +23,8 @@ pub struct Client {
 impl Client {
     /// Creates a new HipChat API v2 client
     pub fn new<T: Into<String>, O: AsRef<str>>(origin: O, token: T) -> Self {
-        Client {
-            base_url: format!("{}/v2", origin.as_ref()),
-            auth: Authorization(Bearer { token: token.into() }),
-            hyper_client: HyperClient::new()
-        }
+        let duration = Duration::new(DEFAULT_TIMEOUT, 0);
+        Client::with_timeouts(origin, token, duration)
     }
     /// Creates a new HipChat API v2 client that has read and write timeouts
     pub fn with_timeouts<T: Into<String>, O: AsRef<str>>(origin: O, token: T, duration: Duration) -> Self {
