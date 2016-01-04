@@ -10,8 +10,6 @@ description = "An API client library for HipChat"
 keywords = ["hipchat"]
 
 [dependencies]
-serde = "0.6"
-serde_json = "0.6"
-serde_macros = "0.6"
+rustc-serialize = "0.3"
 hyper = "0.7"
 url = "0.5"

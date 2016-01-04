@@ -5,7 +5,7 @@ use std::time::Duration;
 use hyper::Client as HyperClient;
 use hyper::header::{Authorization, Bearer, ContentType};
 use hyper::status::StatusClass;
-use serde_json::{self, Value};
+use rustc_serialize::json::{self, Json};
 use url::{form_urlencoded, Url};
 
 use emoticon::Emoticon;
@@ -51,7 +51,7 @@ impl Client {
 
         let mut body = String::new();
         try!(res.read_to_string(&mut body));
-        Ok(try!(serde_json::from_str(&body)))
+        Ok(try!(json::decode(&body)))
     }
     /// [Get room](https://www.hipchat.com/docs/apiv2/method/get_room)
     pub fn get_room<T: AsRef<str>>(&self, room_id_or_name: T) -> Result<RoomDetail, Error> {
@@ -65,11 +65,11 @@ impl Client {
 
         let mut body = String::new();
         try!(res.read_to_string(&mut body));
-        Ok(try!(serde_json::from_str(&body)))
+        Ok(try!(json::decode(&body)))
     }
     /// [Update room](https://www.hipchat.com/docs/apiv2/method/update_room)
     pub fn update_room<T: AsRef<str>>(&self, room_id_or_name: T, req: &RoomUpdate) -> Result<RoomDetail, Error> {
-        let body = serde_json::to_string(req).unwrap();
+        let body = json::encode(req).unwrap();
         let mut res = try!(self.hyper_client.put(&format!("{}/room/{}", self.base_url, room_id_or_name.as_ref()))
             .header(self.auth.to_owned())
             .header(ContentType::json())
@@ -82,7 +82,7 @@ impl Client {
 
         let mut body = String::new();
         try!(res.read_to_string(&mut body));
-        Ok(try!(serde_json::from_str(&body)))
+        Ok(try!(json::decode(&body)))
     }
     /// [Delete room](https://www.hipchat.com/docs/apiv2/method/delete_room)
     pub fn delete_room<T: AsRef<str>>(&self, room_id_or_name: T) -> Result<(), Error> {
@@ -126,13 +126,13 @@ impl Client {
 
         let mut body = String::new();
         try!(res.read_to_string(&mut body));
-        Ok(try!(serde_json::from_str(&body)))
+        Ok(try!(json::decode(&body)))
     }
     /// [Send message](https://www.hipchat.com/docs/apiv2/method/send_message)
     pub fn send_message<T: AsRef<str>, U: Into<String>>(&self, room_id_or_name: T, message: U) -> Result<RoomMessage, Error> {
         let mut obj = BTreeMap::new();
-        obj.insert("message".to_owned(), Value::String(message.into()));
-        let body = serde_json::to_string(&Value::Object(obj)).unwrap();
+        obj.insert("message".to_owned(), Json::String(message.into()));
+        let body = json::encode(&obj).unwrap();
 
         let mut res = try!(self.hyper_client.post(&format!("{}/room/{}/message", self.base_url, room_id_or_name.as_ref()))
             .header(self.auth.to_owned())
@@ -146,11 +146,11 @@ impl Client {
 
         let mut body = String::new();
         try!(res.read_to_string(&mut body));
-        Ok(try!(serde_json::from_str(&body)))
+        Ok(try!(json::decode(&body)))
     }
     /// [Send room notification](https://www.hipchat.com/docs/apiv2/method/send_room_notification)
     pub fn send_notification<T: AsRef<str>>(&self, room_id_or_name: T, notification: &Notification) -> Result<(), Error> {
-        let body = serde_json::to_string(notification).unwrap();
+        let body = json::encode(notification).unwrap();
         let res = try!(self.hyper_client.post(&format!("{}/room/{}/notification", self.base_url, room_id_or_name.as_ref()))
             .header(self.auth.to_owned())
             .header(ContentType::json())

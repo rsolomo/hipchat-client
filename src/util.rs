@@ -1,7 +1,6 @@
 use std::str::FromStr;
 
-use serde::de::{Deserialize, Deserializer, Error, Visitor};
-use serde::ser::{Serialize, Serializer};
+use rustc_serialize::{Encodable, Decodable, Decoder, Encoder};
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum Privacy {
@@ -36,28 +35,17 @@ impl AsRef<str> for Privacy {
     }
 }
 
-impl Serialize for Privacy {
-    fn serialize<S: Serializer>(&self, s: &mut S) -> Result<(), S::Error> {
-        s.visit_str(self.as_ref())
+impl Decodable for Privacy {
+    fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
+        d.read_str().and_then(|s| {
+            s.parse().map_err(|_| d.error("invalid value for privacy"))
+        })
     }
 }
 
-impl Deserialize for Privacy {
-    fn deserialize<D: Deserializer>(d: &mut D) -> Result<Self, D::Error> {
-        d.visit_str(PrivacyVisitor)
-    }
-}
-
-struct PrivacyVisitor;
-
-impl Visitor for PrivacyVisitor {
-    type Value = Privacy;
-
-    fn visit_str<E: Error>(&mut self, s: &str) -> Result<Self::Value, E> {
-        match s.parse() {
-            Ok(x) => Ok(x),
-            Err(_) => Err(E::syntax("invalid value for privacy"))
-        }
+impl Encodable for Privacy {
+    fn encode<S: Encoder>(&self, s: &mut S) -> Result<(), S::Error> {
+        s.emit_str(self.as_ref())
     }
 }
 
@@ -106,28 +94,17 @@ impl AsRef<str> for Color {
     }
 }
 
-impl Serialize for Color {
-    fn serialize<S: Serializer>(&self, s: &mut S) -> Result<(), S::Error> {
-        s.visit_str(self.as_ref())
+impl Decodable for Color {
+    fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
+        d.read_str().and_then(|s| {
+            s.parse().map_err(|_| d.error("invalid value for color"))
+        })
     }
 }
 
-impl Deserialize for Color {
-    fn deserialize<D: Deserializer>(d: &mut D) -> Result<Self, D::Error> {
-        d.visit_str(ColorVisitor)
-    }
-}
-
-struct ColorVisitor;
-
-impl Visitor for ColorVisitor {
-    type Value = Color;
-
-    fn visit_str<E: Error>(&mut self, s: &str) -> Result<Self::Value, E> {
-        match s.parse() {
-            Ok(x) => Ok(x),
-            Err(_) => Err(E::syntax("invalid value for color"))
-        }
+impl Encodable for Color {
+    fn encode<S: Encoder>(&self, s: &mut S) -> Result<(), S::Error> {
+        s.emit_str(self.as_ref())
     }
 }
 
@@ -164,40 +141,29 @@ impl AsRef<str> for MessageFormat {
     }
 }
 
-impl Serialize for MessageFormat {
-    fn serialize<S: Serializer>(&self, s: &mut S) -> Result<(), S::Error> {
-        s.visit_str(self.as_ref())
+impl Decodable for MessageFormat {
+    fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
+        d.read_str().and_then(|s| {
+            s.parse().map_err(|_| d.error("invalid value for message_format"))
+        })
     }
 }
 
-impl Deserialize for MessageFormat {
-    fn deserialize<D: Deserializer>(d: &mut D) -> Result<Self, D::Error> {
-        d.visit_str(MessageFormatVisitor)
-    }
-}
-
-struct MessageFormatVisitor;
-
-impl Visitor for MessageFormatVisitor {
-    type Value = MessageFormat;
-
-    fn visit_str<E: Error>(&mut self, s: &str) -> Result<Self::Value, E> {
-        match s.parse() {
-            Ok(x) => Ok(x),
-            Err(_) => Err(E::syntax("invalid value for message_format"))
-        }
+impl Encodable for MessageFormat {
+    fn encode<S: Encoder>(&self, s: &mut S) -> Result<(), S::Error> {
+        s.emit_str(self.as_ref())
     }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
-    use serde_json;
+    use rustc_serialize::json;
 
     #[test]
     fn unit_deserialize_message_format_html() {
         let expected = MessageFormat::Html;
-        let actual = serde_json::from_str::<MessageFormat>("\"html\"")
+        let actual = json::decode::<MessageFormat>("\"html\"")
             .unwrap_or_else(|e| panic!("{}", e));
         assert_eq!(actual, expected);
     }
@@ -205,21 +171,21 @@ mod test {
     #[test]
     fn unit_deserialize_message_format_text() {
         let expected = MessageFormat::Text;
-        let actual = serde_json::from_str::<MessageFormat>("\"text\"")
+        let actual = json::decode::<MessageFormat>("\"text\"")
             .unwrap_or_else(|e| panic!("{}", e));
         assert_eq!(actual, expected);
     }
 
     #[test]
     fn unit_serialize_message_format_text() {
-        let actual = serde_json::to_string(&MessageFormat::Text).unwrap();
+        let actual = json::encode(&MessageFormat::Text).unwrap();
         let expected = "\"text\"";
         assert_eq!(actual, expected);
     }
 
     #[test]
     fn unit_serialize_privacy_private() {
-        let actual = serde_json::to_string(&Privacy::Private).unwrap();
+        let actual = json::encode(&Privacy::Private).unwrap();
         let expected = "\"private\"";
         assert_eq!(actual, expected);
     }
