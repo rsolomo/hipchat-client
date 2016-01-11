@@ -2,7 +2,7 @@
 name = "hipchat-client"
 version = "0.2.0"
 authors = ["Ray Solomon <raybsolomon@gmail.com>"]
-license = "MIT"
+license = "MIT OR Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/rsolomo/hipchat-client"
 homepage = "https://github.com/rsolomo/hipchat-client"
