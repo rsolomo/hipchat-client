@@ -1,5 +1,6 @@
 {
   "token": "your hipchat token",
   "origin": "https://api.hipchat.com",
-  "room": "a room in hipchat"
+  "room": "a room in hipchat",
+  "user": 25699
 }

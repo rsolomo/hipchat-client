@@ -1,6 +1,7 @@
 use rustc_serialize::{Decodable, Decoder};
 
-use util::{Color, MessageFormat, Privacy};
+use util::{Privacy};
+use message::{Color, MessageFormat};
 
 #[derive(Debug, Hash, Eq, PartialEq)]
 pub struct RoomsRequest {
@@ -10,13 +11,25 @@ pub struct RoomsRequest {
     pub include_archived: Option<bool>
 }
 
-#[allow(non_snake_case)]
-#[derive(Debug, Hash, Eq, PartialEq, RustcDecodable)]
+#[derive(Debug, Hash, Eq, PartialEq)]
 pub struct Rooms {
-    pub startIndex: u64,
-    pub maxResults: u64,
+    pub start_index: u64,
+    pub max_results: u64,
     pub items: Vec<Room>,
     pub links: RoomsLinks
+}
+
+impl Decodable for Rooms {
+    fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
+        d.read_struct("root", 4, |d| {
+            Ok(Rooms {
+                start_index: try!(d.read_struct_field("startIndex", 0, Decodable::decode)),
+                max_results: try!(d.read_struct_field("maxResults", 0, Decodable::decode)),
+                items: try!(d.read_struct_field("items", 0, Decodable::decode)),
+                links: try!(d.read_struct_field("links", 0, Decodable::decode)),
+            })
+        })
+    }
 }
 
 #[derive(Debug, Hash, Eq, PartialEq)]
@@ -138,12 +151,6 @@ pub struct RoomUpdate {
 #[derive(Debug, Hash, Eq, PartialEq, RustcEncodable, RustcDecodable)]
 pub struct RoomUpdateOwner {
     pub id: Option<String>
-}
-
-#[derive(Debug, Hash, Eq, PartialEq, RustcDecodable)]
-pub struct RoomMessage {
-    pub id: String,
-    pub timestamp: String
 }
 
 #[derive(Debug, Hash, Eq, PartialEq, RustcEncodable, RustcDecodable)]

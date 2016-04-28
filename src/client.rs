@@ -10,7 +10,9 @@ use url::{form_urlencoded, Url};
 
 use emoticon::Emoticon;
 use error::Error;
-use room::{RoomDetail, RoomMessage, RoomUpdate, Rooms, RoomsRequest, Notification};
+use room::{RoomDetail, RoomUpdate, Rooms, RoomsRequest, Notification};
+use user::{UserDetail, Users, UsersRequest};
+use message::{Message, Messages, MessagesRequest};
 
 const DEFAULT_TIMEOUT: u64 = 120;
 
@@ -128,7 +130,7 @@ impl Client {
         Ok(try!(json::decode(&body)))
     }
     /// [Send message](https://www.hipchat.com/docs/apiv2/method/send_message)
-    pub fn send_message<T: AsRef<str>, U: Into<String>>(&self, room_id_or_name: T, message: U) -> Result<RoomMessage, Error> {
+    pub fn send_message<T: AsRef<str>, U: Into<String>>(&self, room_id_or_name: T, message: U) -> Result<Message, Error> {
         let mut obj = BTreeMap::new();
         obj.insert("message".to_owned(), Json::String(message.into()));
         let body = json::encode(&obj).unwrap();
@@ -137,6 +139,48 @@ impl Client {
             .header(self.auth.to_owned())
             .header(ContentType::json())
             .body(body.as_bytes())
+            .send());
+
+        if res.status.class() != StatusClass::Success {
+            return Err(Error::HttpStatus(res.status));
+        }
+
+        let mut body = String::new();
+        try!(res.read_to_string(&mut body));
+        Ok(try!(json::decode(&body)))
+    }
+    /// [Get Private Messages](https://www.hipchat.com/docs/apiv2/method/view_privatechat_history)
+    pub fn get_private_messages<T: AsRef<str>>(&self, user_id_or_email: T, req: Option<&MessagesRequest>) -> Result<Messages, Error> {
+        let mut pairs = Vec::new();
+        if let Some(users_request) = req {
+            if let Some(start_index) = users_request.start_index {
+                pairs.push(("start-index", start_index.to_string()));
+            }
+            if let Some(reversed) = users_request.reversed {
+                pairs.push(("reversed", reversed.to_string()));
+            }
+            if let Some(max_results) = users_request.max_results {
+                pairs.push(("max-results", max_results.to_string()));
+            }
+            if let Some(include_deleted) = users_request.include_deleted {
+                pairs.push(("include_deleted", include_deleted.to_string()));
+            }
+            if let Some(date) = users_request.date.as_ref() {
+                pairs.push(("date", date.to_string()));
+            }
+            if let Some(end_date) = users_request.end_date.as_ref() {
+                pairs.push(("end-date", end_date.to_string()));
+            }
+            if let Some(timezone) = users_request.timezone.as_ref() {
+                pairs.push(("timezone", timezone.to_string()));
+            }
+        }
+
+        let mut url = Url::parse(&format!("{}/user/{}/history", self.base_url, user_id_or_email.as_ref())).unwrap();
+        url.query = Some(form_urlencoded::serialize(pairs));
+
+        let mut res = try!(self.hyper_client.get(url)
+            .header(self.auth.to_owned())
             .send());
 
         if res.status.class() != StatusClass::Success {
@@ -160,5 +204,52 @@ impl Client {
             return Err(Error::HttpStatus(res.status));
         }
         Ok(())
+    }
+    /// [Get all users](https://www.hipchat.com/docs/apiv2/method/get_all_users)
+    pub fn get_users(&self, req: Option<&UsersRequest>) -> Result<Users, Error> {
+        let mut pairs = Vec::new();
+        if let Some(rooms_request) = req {
+            if let Some(start_index) = rooms_request.start_index {
+                pairs.push(("start-index", start_index.to_string()));
+            }
+            if let Some(max_results) = rooms_request.max_results {
+                pairs.push(("max-results", max_results.to_string()));
+            }
+            if let Some(include_guests) = rooms_request.include_guests {
+                pairs.push(("include-guests", include_guests.to_string()));
+            }
+            if let Some(include_deleted) = rooms_request.include_deleted {
+                pairs.push(("include-deleted", include_deleted.to_string()));
+            }
+        }
+
+        let mut url = Url::parse(&format!("{}/user", self.base_url)).unwrap();
+        url.query = Some(form_urlencoded::serialize(pairs));
+
+        let mut res = try!(self.hyper_client.get(url)
+            .header(self.auth.to_owned())
+            .send());
+
+        if res.status.class() != StatusClass::Success {
+            return Err(Error::HttpStatus(res.status));
+        }
+
+        let mut body = String::new();
+        try!(res.read_to_string(&mut body));
+        Ok(try!(json::decode(&body)))
+    }
+    /// [Get user](https://www.hipchat.com/docs/apiv2/method/view_user)
+    pub fn get_user<T: AsRef<str>>(&self, user_id_or_name: T) -> Result<UserDetail, Error> {
+        let mut res = try!(self.hyper_client.get(&format!("{}/user/{}", self.base_url, user_id_or_name.as_ref()))
+            .header(self.auth.to_owned())
+            .send());
+
+        if res.status.class() != StatusClass::Success {
+            return Err(Error::HttpStatus(res.status));
+        }
+
+        let mut body = String::new();
+        try!(res.read_to_string(&mut body));
+        Ok(try!(json::decode(&body)))
     }
 }

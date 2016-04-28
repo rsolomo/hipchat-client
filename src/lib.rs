@@ -6,6 +6,8 @@ pub mod client;
 pub mod error;
 pub mod emoticon;
 pub mod room;
+pub mod user;
+pub mod message;
 pub mod util;
 
 pub use client::Client;
