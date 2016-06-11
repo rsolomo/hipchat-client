@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Notification",""],["Room",""],["RoomDetail",""],["RoomDetailLinks",""],["RoomDetailOwner",""],["RoomDetailOwnerLinks",""],["RoomDetailStatistics",""],["RoomDetailStatisticsLinks",""],["RoomUpdate",""],["RoomUpdateOwner",""],["Rooms",""],["RoomsLinks",""],["RoomsRequest",""]]});
