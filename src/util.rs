@@ -2,6 +2,9 @@ use std::str::FromStr;
 
 use rustc_serialize::{Encodable, Decodable, Decoder, Encoder};
 
+use url::UrlQuery;
+use url::form_urlencoded::Serializer;
+
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum Privacy {
     Public,
@@ -47,6 +50,10 @@ impl Encodable for Privacy {
     fn encode<S: Encoder>(&self, s: &mut S) -> Result<(), S::Error> {
         s.emit_str(self.as_ref())
     }
+}
+
+pub trait AppendToQueryParams {
+    fn append_to(&self, query: &mut Serializer<UrlQuery>);
 }
 
 #[cfg(test)]

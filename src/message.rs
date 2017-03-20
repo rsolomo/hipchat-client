@@ -2,6 +2,10 @@ use std::str::FromStr;
 use rustc_serialize::{Decodable, Encodable, Decoder, Encoder};
 use user::{UserDetail};
 
+use util::AppendToQueryParams;
+use url::UrlQuery;
+use url::form_urlencoded::Serializer;
+
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum Color {
     Yellow,
@@ -172,6 +176,18 @@ pub struct MessagesRequest {
     pub end_date: Option<String>,
 }
 
+impl AppendToQueryParams for MessagesRequest {
+    fn append_to(&self, query: &mut Serializer<UrlQuery>){
+        self.start_index.map(|start_index| query.append_pair("start-index", &start_index.to_string()));
+        self.max_results.map(|max_results| query.append_pair("max-results", &max_results.to_string()));
+        self.reversed.map(|reversed| query.append_pair("reversed", &reversed.to_string()));
+        self.date.as_ref().map(|date| query.append_pair("date", date));
+        self.include_deleted.map(|include_deleted| query.append_pair("include-deleted", &include_deleted.to_string()));
+        self.timezone.as_ref().map(|timezone| query.append_pair("timezone", timezone));
+        self.end_date.as_ref().map(|end_date| query.append_pair("end-date", end_date));
+    }
+}
+
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct MessageDetailLinks {
     pub self_: String,
@@ -252,6 +268,7 @@ impl Decodable for Message {
 mod test {
     use super::*;
     use rustc_serialize::json;
+    use url::Url;
 
     #[test]
     fn unit_deserialize_message_format_html() {
@@ -274,5 +291,39 @@ mod test {
         let actual = json::encode(&MessageFormat::Text).unwrap();
         let expected = "\"text\"";
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn unit_default_messages_request_should_create_empty_params(){
+        let messages_request = MessagesRequest{ start_index: None,
+                                                max_results: None,
+                                                reversed: None,
+                                                date: None,
+                                                include_deleted: None,
+                                                timezone: None,
+                                                end_date: None };
+
+        let mut url = Url::parse("https://rsolomo.github.io/hipchat-client/hipchat_client/index.html").unwrap();
+
+        messages_request.append_to(&mut url.query_pairs_mut());
+
+        assert_eq!(Some(""), url.query());
+    }
+
+    #[test]
+    fn unit_populated_messages_request_should_create_encoded_params(){
+        let messages_request = MessagesRequest{ start_index: Some(1),
+                                                max_results: Some(10),
+                                                reversed: Some(false),
+                                                date: Some("2017-03-20T12:00:00+4:00".to_string()),
+                                                include_deleted: Some(false),
+                                                timezone: Some("UTC".to_string()),
+                                                end_date: Some("2017-03-20T13:00:00+4:00".to_string()) };
+
+        let mut url = Url::parse("https://rsolomo.github.io/hipchat-client/hipchat_client/index.html").unwrap();
+
+        messages_request.append_to(&mut url.query_pairs_mut());
+
+        assert_eq!(Some("start-index=1&max-results=10&reversed=false&date=2017-03-20T12%3A00%3A00%2B4%3A00&include-deleted=false&timezone=UTC&end-date=2017-03-20T13%3A00%3A00%2B4%3A00"), url.query());
     }
 }

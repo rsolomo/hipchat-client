@@ -3,16 +3,19 @@ use std::collections::BTreeMap;
 use std::time::Duration;
 
 use hyper::Client as HyperClient;
+use hyper::net::HttpsConnector;
+use hyper_native_tls::NativeTlsClient;
+use hyper::Url;
 use hyper::header::{Authorization, Bearer, ContentType};
 use hyper::status::StatusClass;
 use rustc_serialize::json::{self, Json};
-use url::{form_urlencoded, Url};
 
 use emoticon::Emoticon;
 use error::Error;
 use room::{RoomDetail, RoomUpdate, Rooms, RoomsRequest, Notification};
 use user::{UserDetail, Users, UsersRequest};
 use message::{Message, Messages, MessagesRequest};
+use util::AppendToQueryParams;
 
 const DEFAULT_TIMEOUT: u64 = 120;
 
@@ -30,7 +33,9 @@ impl Client {
     }
     /// Creates a new HipChat API v2 client that has read and write timeouts
     pub fn with_timeouts<T: Into<String>, O: AsRef<str>>(origin: O, token: T, duration: Duration) -> Self {
-        let mut hyper_client = HyperClient::new();
+        let ssl = NativeTlsClient::new().unwrap();
+        let connector = HttpsConnector::new(ssl);
+        let mut hyper_client = HyperClient::with_connector(connector);
         hyper_client.set_read_timeout(Some(duration));
         hyper_client.set_write_timeout(Some(duration));
 
@@ -98,24 +103,8 @@ impl Client {
     }
     /// [Get all rooms](https://www.hipchat.com/docs/apiv2/method/get_all_rooms)
     pub fn get_rooms(&self, req: Option<&RoomsRequest>) -> Result<Rooms, Error> {
-        let mut pairs = Vec::new();
-        if let Some(rooms_request) = req {
-            if let Some(start_index) = rooms_request.start_index {
-                pairs.push(("start-index", start_index.to_string()));
-            }
-            if let Some(max_results) = rooms_request.max_results {
-                pairs.push(("max-results", max_results.to_string()));
-            }
-            if let Some(include_private) = rooms_request.include_private {
-                pairs.push(("include-private", include_private.to_string()));
-            }
-            if let Some(include_archived) = rooms_request.include_private {
-                pairs.push(("include-archived", include_archived.to_string()));
-            }
-        }
-
         let mut url = Url::parse(&format!("{}/room", self.base_url)).unwrap();
-        url.query = Some(form_urlencoded::serialize(pairs));
+        req.map(|rooms_request| rooms_request.append_to(&mut url.query_pairs_mut()));
 
         let mut res = try!(self.hyper_client.get(url)
             .header(self.auth.to_owned())
@@ -151,33 +140,8 @@ impl Client {
     }
     /// [Get Private Messages](https://www.hipchat.com/docs/apiv2/method/view_privatechat_history)
     pub fn get_private_messages<T: AsRef<str>>(&self, user_id_or_email: T, req: Option<&MessagesRequest>) -> Result<Messages, Error> {
-        let mut pairs = Vec::new();
-        if let Some(users_request) = req {
-            if let Some(start_index) = users_request.start_index {
-                pairs.push(("start-index", start_index.to_string()));
-            }
-            if let Some(reversed) = users_request.reversed {
-                pairs.push(("reversed", reversed.to_string()));
-            }
-            if let Some(max_results) = users_request.max_results {
-                pairs.push(("max-results", max_results.to_string()));
-            }
-            if let Some(include_deleted) = users_request.include_deleted {
-                pairs.push(("include_deleted", include_deleted.to_string()));
-            }
-            if let Some(date) = users_request.date.as_ref() {
-                pairs.push(("date", date.to_string()));
-            }
-            if let Some(end_date) = users_request.end_date.as_ref() {
-                pairs.push(("end-date", end_date.to_string()));
-            }
-            if let Some(timezone) = users_request.timezone.as_ref() {
-                pairs.push(("timezone", timezone.to_string()));
-            }
-        }
-
         let mut url = Url::parse(&format!("{}/user/{}/history", self.base_url, user_id_or_email.as_ref())).unwrap();
-        url.query = Some(form_urlencoded::serialize(pairs));
+        req.map(|messages_request| messages_request.append_to(&mut url.query_pairs_mut()));
 
         let mut res = try!(self.hyper_client.get(url)
             .header(self.auth.to_owned())
@@ -207,24 +171,8 @@ impl Client {
     }
     /// [Get all users](https://www.hipchat.com/docs/apiv2/method/get_all_users)
     pub fn get_users(&self, req: Option<&UsersRequest>) -> Result<Users, Error> {
-        let mut pairs = Vec::new();
-        if let Some(rooms_request) = req {
-            if let Some(start_index) = rooms_request.start_index {
-                pairs.push(("start-index", start_index.to_string()));
-            }
-            if let Some(max_results) = rooms_request.max_results {
-                pairs.push(("max-results", max_results.to_string()));
-            }
-            if let Some(include_guests) = rooms_request.include_guests {
-                pairs.push(("include-guests", include_guests.to_string()));
-            }
-            if let Some(include_deleted) = rooms_request.include_deleted {
-                pairs.push(("include-deleted", include_deleted.to_string()));
-            }
-        }
-
         let mut url = Url::parse(&format!("{}/user", self.base_url)).unwrap();
-        url.query = Some(form_urlencoded::serialize(pairs));
+        req.map(|users_request| users_request.append_to(&mut url.query_pairs_mut()));
 
         let mut res = try!(self.hyper_client.get(url)
             .header(self.auth.to_owned())
