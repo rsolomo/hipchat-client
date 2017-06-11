@@ -1,13 +1,15 @@
 extern crate hipchat_client;
 extern crate hyper;
-extern crate rustc_serialize;
+#[macro_use]
+extern crate serde_derive;
 
+extern crate serde;
+extern crate serde_json;
 use std::io::prelude::*;
 use std::fs::File;
-use rustc_serialize::json;
 use hipchat_client::Client as HipchatClient;
 
-#[derive(RustcDecodable)]
+#[derive(Deserialize)]
 struct Config {
     token: String,
     origin: String,
@@ -21,7 +23,7 @@ fn setup() -> (HipchatClient, Config) {
         .unwrap_or_else(|e| panic!("{}", e))
         .read_to_string(contents)
         .unwrap_or_else(|e| panic!("{}", e));
-    let config = json::decode::<Config>(contents)
+    let config: Config = serde_json::from_str(contents)
         .unwrap_or_else(|e| panic!("{}", e));
     (HipchatClient::new(config.origin.clone(), config.token.clone()), config)
 }

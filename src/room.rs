@@ -1,5 +1,3 @@
-use rustc_serialize::{Decodable, Decoder};
-
 use util::{Privacy, AppendToQueryParams};
 use message::{Color, MessageFormat};
 
@@ -24,54 +22,32 @@ impl AppendToQueryParams for RoomsRequest {
     }
 }
 
-#[derive(Debug, Hash, Eq, PartialEq)]
+#[derive(Debug, Hash, Eq, PartialEq, Deserialize)]
 pub struct Rooms {
+    #[serde(rename = "startIndex")]
     pub start_index: u64,
+    #[serde(rename = "maxResults")]
     pub max_results: u64,
     pub items: Vec<Room>,
     pub links: RoomsLinks
 }
 
-impl Decodable for Rooms {
-    fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
-        d.read_struct("root", 4, |d| {
-            Ok(Rooms {
-                start_index: try!(d.read_struct_field("startIndex", 0, Decodable::decode)),
-                max_results: try!(d.read_struct_field("maxResults", 0, Decodable::decode)),
-                items: try!(d.read_struct_field("items", 0, Decodable::decode)),
-                links: try!(d.read_struct_field("links", 0, Decodable::decode)),
-            })
-        })
-    }
-}
-
-#[derive(Debug, Hash, Eq, PartialEq)]
+#[derive(Debug, Hash, Eq, PartialEq, Deserialize)]
 pub struct RoomsLinks {
+    #[serde(rename = "self")]
     pub self_: String,
     pub prev: Option<String>,
     pub next: Option<String>
 }
 
-impl Decodable for RoomsLinks {
-    fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
-        d.read_struct("root", 3, |d| {
-            Ok(RoomsLinks {
-                self_: try!(d.read_struct_field("self", 0, Decodable::decode)),
-                prev: try!(d.read_struct_field("prev", 1, Decodable::decode)),
-                next: try!(d.read_struct_field("next", 2, Decodable::decode))
-            })
-        })
-    }
-}
-
-#[derive(Debug, Hash, Eq, PartialEq, RustcDecodable)]
+#[derive(Debug, Hash, Eq, PartialEq, Deserialize)]
 pub struct Room {
     pub name: String,
     pub id: u64,
     pub links: RoomDetailLinks
 }
 
-#[derive(Debug, Hash, Eq, PartialEq, RustcDecodable)]
+#[derive(Debug, Hash, Eq, PartialEq, Deserialize)]
 pub struct RoomDetail {
     pub xmpp_jid: String,
     pub statistics: RoomDetailStatistics,
@@ -87,48 +63,27 @@ pub struct RoomDetail {
     pub guest_access_url: Option<String>
 }
 
-#[derive(Debug, Hash, Eq, PartialEq, RustcDecodable)]
+#[derive(Debug, Hash, Eq, PartialEq, Deserialize)]
 pub struct RoomDetailStatistics {
     pub links: RoomDetailStatisticsLinks
 }
 
-#[derive(Debug, Hash, Eq, PartialEq)]
+#[derive(Debug, Hash, Eq, PartialEq, Deserialize)]
 pub struct RoomDetailStatisticsLinks {
+    #[serde(rename = "self")]
     pub self_: String
 }
 
-impl Decodable for RoomDetailStatisticsLinks {
-    fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
-        d.read_struct("root", 1, |d| {
-            Ok(RoomDetailStatisticsLinks {
-                self_: try!(d.read_struct_field("self", 0, Decodable::decode))
-            })
-        })
-    }
-}
-
-#[derive(Debug, Hash, Eq, PartialEq)]
+#[derive(Debug, Hash, Eq, PartialEq, Deserialize)]
 pub struct RoomDetailLinks {
+    #[serde(rename = "self")]
     pub self_: String,
     pub webhooks: String,
     pub members: Option<String>,
     pub participants: String
 }
 
-impl Decodable for RoomDetailLinks {
-    fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
-        d.read_struct("root", 4, |d| {
-            Ok(RoomDetailLinks {
-                self_: try!(d.read_struct_field("self", 0, Decodable::decode)),
-                webhooks: try!(d.read_struct_field("webhooks", 1, Decodable::decode)),
-                members: try!(d.read_struct_field("members", 2, Decodable::decode)),
-                participants: try!(d.read_struct_field("participants", 3, Decodable::decode))
-            })
-        })
-    }
-}
-
-#[derive(Debug, Hash, Eq, PartialEq, RustcDecodable)]
+#[derive(Debug, Hash, Eq, PartialEq, Deserialize)]
 pub struct RoomDetailOwner {
     pub mention_name: String,
     pub id: u64,
@@ -136,22 +91,13 @@ pub struct RoomDetailOwner {
     pub name: String
 }
 
-#[derive(Debug, Hash, Eq, PartialEq)]
+#[derive(Debug, Hash, Eq, PartialEq, Deserialize)]
 pub struct RoomDetailOwnerLinks {
+    #[serde(rename = "self")]
     pub self_: String
 }
 
-impl Decodable for RoomDetailOwnerLinks {
-    fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
-        d.read_struct("root", 1, |d| {
-            Ok(RoomDetailOwnerLinks {
-                self_: try!(d.read_struct_field("self", 0, Decodable::decode))
-            })
-        })
-    }
-}
-
-#[derive(Debug, Hash, Eq, PartialEq, RustcEncodable, RustcDecodable)]
+#[derive(Debug, Hash, Eq, PartialEq, Serialize, Deserialize)]
 pub struct RoomUpdate {
     pub name: Option<String>,
     pub privacy: Option<Privacy>,
@@ -161,12 +107,12 @@ pub struct RoomUpdate {
     pub owner: Option<RoomUpdateOwner>
 }
 
-#[derive(Debug, Hash, Eq, PartialEq, RustcEncodable, RustcDecodable)]
+#[derive(Debug, Hash, Eq, PartialEq, Serialize, Deserialize)]
 pub struct RoomUpdateOwner {
     pub id: Option<String>
 }
 
-#[derive(Debug, Hash, Eq, PartialEq, RustcEncodable, RustcDecodable)]
+#[derive(Debug, Hash, Eq, PartialEq, Serialize, Deserialize)]
 pub struct Notification {
     pub color: Color,
     pub message: String,
@@ -188,8 +134,8 @@ impl Default for Notification {
 #[cfg(test)]
 mod test {
     use super::*;
-    use rustc_serialize::json;
     use url::Url;
+    use serde_json::{self};
 
     #[test]
     fn unit_rooms_links() {
@@ -198,7 +144,7 @@ mod test {
             prev: Some("https://www.example.com".to_owned()),
             next: Some("https://www.example.com".to_owned())
         };
-        let actual = json::decode::<RoomsLinks>(r#"{
+        let actual: RoomsLinks = serde_json::from_str(r#"{
             "self":"https://www.example.com",
             "prev":"https://www.example.com",
             "next":"https://www.example.com"
