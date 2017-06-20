@@ -7,12 +7,3 @@ sudo: false
 script:
   - cargo build --verbose
   - cargo test unit --verbose
-after_success: |
-    [ $TRAVIS_BRANCH = master ] &&
-    [ $TRAVIS_PULL_REQUEST = false ] &&
-    [ $TRAVIS_RUST_VERSION = stable ] &&
-    cargo doc --no-deps &&
-    echo '<meta http-equiv=refresh content=0;url=hipchat_client/index.html>' > target/doc/index.html &&
-    pip install --user ghp-import &&
-    ghp-import -n target/doc &&
-    git push -qf https://${TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
