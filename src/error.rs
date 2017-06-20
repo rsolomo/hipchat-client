@@ -4,7 +4,7 @@ use std::fmt::{Display, Formatter};
 use std::io::Error as IoError;
 use hyper::error::Error as HyperError;
 use hyper::status::StatusCode;
-use rustc_serialize::json::DecoderError as JsonError;
+use serde_json::error::Error as JsonError;
 
 #[derive(Debug)]
 pub enum Error {

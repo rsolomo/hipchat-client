@@ -8,13 +8,13 @@ use hyper_native_tls::NativeTlsClient;
 use hyper::Url;
 use hyper::header::{Authorization, Bearer, ContentType};
 use hyper::status::StatusClass;
-use rustc_serialize::json::{self, Json};
+use serde_json::{self};
 
 use emoticon::Emoticon;
 use error::Error;
 use room::{RoomDetail, RoomUpdate, Rooms, RoomsRequest, Notification};
 use user::{UserDetail, Users, UsersRequest};
-use message::{Message, Messages, MessagesRequest};
+use message::{Messages, MessagesRequest, SendMessageResponse};
 use util::AppendToQueryParams;
 
 const DEFAULT_TIMEOUT: u64 = 120;
@@ -57,7 +57,8 @@ impl Client {
 
         let mut body = String::new();
         try!(res.read_to_string(&mut body));
-        Ok(try!(json::decode(&body)))
+        let emoticon: Emoticon = try!(serde_json::from_str(&body));
+        Ok(emoticon)
     }
     /// [Get room](https://www.hipchat.com/docs/apiv2/method/get_room)
     pub fn get_room<T: AsRef<str>>(&self, room_id_or_name: T) -> Result<RoomDetail, Error> {
@@ -71,12 +72,13 @@ impl Client {
 
         let mut body = String::new();
         try!(res.read_to_string(&mut body));
-        Ok(try!(json::decode(&body)))
+        let room: RoomDetail = try!(serde_json::from_str(&body));
+        Ok(room)
     }
     /// [Update room](https://www.hipchat.com/docs/apiv2/method/update_room)
-    pub fn update_room<T: AsRef<str>>(&self, room_id_or_name: T, req: &RoomUpdate) -> Result<RoomDetail, Error> {
-        let body = json::encode(req).unwrap();
-        let mut res = try!(self.hyper_client.put(&format!("{}/room/{}", self.base_url, room_id_or_name.as_ref()))
+    pub fn update_room<T: AsRef<str>>(&self, room_id_or_name: T, req: &RoomUpdate) -> Result<(), Error> {
+        let body = serde_json::to_string(req).unwrap();
+        let res = try!(self.hyper_client.put(&format!("{}/room/{}", self.base_url, room_id_or_name.as_ref()))
             .header(self.auth.to_owned())
             .header(ContentType::json())
             .body(body.as_bytes())
@@ -86,9 +88,7 @@ impl Client {
             return Err(Error::HttpStatus(res.status));
         }
 
-        let mut body = String::new();
-        try!(res.read_to_string(&mut body));
-        Ok(try!(json::decode(&body)))
+        Ok(())
     }
     /// [Delete room](https://www.hipchat.com/docs/apiv2/method/delete_room)
     pub fn delete_room<T: AsRef<str>>(&self, room_id_or_name: T) -> Result<(), Error> {
@@ -116,13 +116,14 @@ impl Client {
 
         let mut body = String::new();
         try!(res.read_to_string(&mut body));
-        Ok(try!(json::decode(&body)))
+        let rooms: Rooms = try!(serde_json::from_str(&body));
+        Ok(rooms)
     }
     /// [Send message](https://www.hipchat.com/docs/apiv2/method/send_message)
-    pub fn send_message<T: AsRef<str>, U: Into<String>>(&self, room_id_or_name: T, message: U) -> Result<Message, Error> {
+    pub fn send_message<T: AsRef<str>, U: Into<String>>(&self, room_id_or_name: T, message: U) -> Result<SendMessageResponse, Error> {
         let mut obj = BTreeMap::new();
-        obj.insert("message".to_owned(), Json::String(message.into()));
-        let body = json::encode(&obj).unwrap();
+        obj.insert("message".to_owned(), message.into());
+        let body = serde_json::to_string(&obj).unwrap();
 
         let mut res = try!(self.hyper_client.post(&format!("{}/room/{}/message", self.base_url, room_id_or_name.as_ref()))
             .header(self.auth.to_owned())
@@ -136,7 +137,8 @@ impl Client {
 
         let mut body = String::new();
         try!(res.read_to_string(&mut body));
-        Ok(try!(json::decode(&body)))
+        let msg: SendMessageResponse = try!(serde_json::from_str(&body)); 
+        Ok(msg)
     }
     /// [Get Private Messages](https://www.hipchat.com/docs/apiv2/method/view_privatechat_history)
     pub fn get_private_messages<T: AsRef<str>>(&self, user_id_or_email: T, req: Option<&MessagesRequest>) -> Result<Messages, Error> {
@@ -153,11 +155,12 @@ impl Client {
 
         let mut body = String::new();
         try!(res.read_to_string(&mut body));
-        Ok(try!(json::decode(&body)))
+        let private_message: Messages = try!(serde_json::from_str(&body));
+        Ok(private_message)
     }
     /// [Send room notification](https://www.hipchat.com/docs/apiv2/method/send_room_notification)
     pub fn send_notification<T: AsRef<str>>(&self, room_id_or_name: T, notification: &Notification) -> Result<(), Error> {
-        let body = json::encode(notification).unwrap();
+        let body = serde_json::to_string(notification).unwrap();
         let res = try!(self.hyper_client.post(&format!("{}/room/{}/notification", self.base_url, room_id_or_name.as_ref()))
             .header(self.auth.to_owned())
             .header(ContentType::json())
@@ -184,7 +187,8 @@ impl Client {
 
         let mut body = String::new();
         try!(res.read_to_string(&mut body));
-        Ok(try!(json::decode(&body)))
+        let users: Users = try!(serde_json::from_str(&body));
+        Ok(users)
     }
     /// [Get user](https://www.hipchat.com/docs/apiv2/method/view_user)
     pub fn get_user<T: AsRef<str>>(&self, user_id_or_name: T) -> Result<UserDetail, Error> {
@@ -198,6 +202,7 @@ impl Client {
 
         let mut body = String::new();
         try!(res.read_to_string(&mut body));
-        Ok(try!(json::decode(&body)))
+        let user_detail: UserDetail = try!(serde_json::from_str(&body));
+        Ok(user_detail)
     }
 }

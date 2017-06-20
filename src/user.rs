@@ -1,5 +1,3 @@
-use rustc_serialize::{Decodable, Decoder};
-
 use util::AppendToQueryParams;
 use url::UrlQuery;
 use url::form_urlencoded::Serializer;
@@ -32,47 +30,25 @@ impl AppendToQueryParams for UsersRequest {
     }
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Deserialize)]
 pub struct UsersLinks {
+    #[serde(rename = "self")]
     pub self_: String,
     pub prev: Option<String>,
     pub next: Option<String>
 }
 
-impl Decodable for UsersLinks {
-    fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
-        d.read_struct("root", 3, |d| {
-            Ok(UsersLinks {
-                self_: try!(d.read_struct_field("self", 0, Decodable::decode)),
-                prev: try!(d.read_struct_field("prev", 1, Decodable::decode)),
-                next: try!(d.read_struct_field("next", 2, Decodable::decode))
-            })
-        })
-    }
-}
-
-#[derive(Debug, Hash, Eq, PartialEq)]
+#[derive(Debug, Hash, Eq, PartialEq, Deserialize)]
 pub struct Users {
+    #[serde(rename = "startIndex")]
     pub start_index: u64,
+    #[serde(rename = "maxResults")]
     pub max_results: u64,
     pub items: Vec<User>,
     pub links: UsersLinks
 }
 
-impl Decodable for Users {
-    fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
-        d.read_struct("root", 4, |d| {
-            Ok(Users {
-                start_index: try!(d.read_struct_field("startIndex", 0, Decodable::decode)),
-                max_results: try!(d.read_struct_field("maxResults", 0, Decodable::decode)),
-                items: try!(d.read_struct_field("items", 0, Decodable::decode)),
-                links: try!(d.read_struct_field("links", 0, Decodable::decode)),
-            })
-        })
-    }
-}
-
-#[derive(Debug, Clone, Hash, Eq, PartialEq, RustcDecodable)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Deserialize)]
 pub struct User {
     pub name: String,
     pub mention_name: String,
@@ -80,24 +56,13 @@ pub struct User {
     pub links: UserDetailLinks
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Deserialize)]
 pub struct UserClient {
     pub version: Option<String>,
     pub client_type: Option<String>,
 }
 
-impl Decodable for UserClient {
-    fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
-        d.read_struct("root", 4, |d| {
-            Ok(UserClient {
-                version: try!(d.read_struct_field("version", 0, Decodable::decode)),
-                client_type: try!(d.read_struct_field("type", 0, Decodable::decode)),
-            })
-        })
-    }
-}
-
-#[derive(Debug, Clone, Hash, Eq, PartialEq, RustcDecodable)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Deserialize)]
 pub struct UserPresence {
     pub status: Option<String>,
     pub idle: Option<u64>,
@@ -106,7 +71,7 @@ pub struct UserPresence {
     pub is_online: bool,
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq, RustcDecodable)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Deserialize)]
 pub struct UserDetail {
     pub id: u64,
     pub xmpp_jid: Option<String>,
@@ -127,22 +92,13 @@ pub struct UserDetail {
     pub links: UserDetailLinks,
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Deserialize)]
 pub struct UserDetailLinks {
+    #[serde(rename = "self")]
     pub self_: String,
 }
 
-impl Decodable for UserDetailLinks {
-    fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
-        d.read_struct("root", 4, |d| {
-            Ok(UserDetailLinks {
-                self_: try!(d.read_struct_field("self", 0, Decodable::decode)),
-            })
-        })
-    }
-}
-
-#[derive(Debug, Hash, Eq, PartialEq, RustcDecodable)]
+#[derive(Debug, Hash, Eq, PartialEq, Deserialize)]
 pub struct UserMessage {
     pub id: String,
     pub timestamp: String
@@ -152,7 +108,7 @@ pub struct UserMessage {
 #[cfg(test)]
 mod test {
     use super::*;
-    use rustc_serialize::json;
+    use serde_json::{self};
     use url::Url;
 
     #[test]
@@ -162,7 +118,7 @@ mod test {
             prev: Some("https://www.example.com".to_owned()),
             next: Some("https://www.example.com".to_owned())
         };
-        let actual = json::decode::<UsersLinks>(r#"{
+        let actual: UsersLinks = serde_json::from_str(r#"{
             "self":"https://www.example.com",
             "prev":"https://www.example.com",
             "next":"https://www.example.com"
