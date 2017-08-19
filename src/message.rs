@@ -104,6 +104,7 @@ pub struct Message {
     pub from: Option<UserDetail>,
     pub message: String,
     pub message_format: Option<MessageFormat>,
+    #[serde(rename(deserialize="type"))]
     pub message_type: MessageType,
     pub color: Option<Color>,
     pub mentions: Vec<String>,

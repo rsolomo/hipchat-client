@@ -166,6 +166,25 @@ impl Client {
         let private_message: Messages = try!(serde_json::from_str(&body));
         Ok(private_message)
     }
+
+    /// [View recent room history](https://www.hipchat.com/docs/apiv2/method/view_recent_room_history)
+    pub fn get_recent_history<T: AsRef<str>>(&self, room_id_or_name: T) -> Result<Messages, Error> {
+        let url = Url::parse(&format!("{}/room/{}/history/latest", self.base_url, room_id_or_name.as_ref())).unwrap();
+
+        let mut res = try!(self.hyper_client.get(url)
+            .header(self.auth.to_owned())
+            .send());
+
+        if res.status.class() != StatusClass::Success {
+            return Err(Error::HttpStatus(res.status));
+        }
+
+        let mut body = String::new();
+        try!(res.read_to_string(&mut body));
+        let recent_messages: Messages = try!(serde_json::from_str(&body));
+        Ok(recent_messages)
+    }
+
     /// [Send room notification](https://www.hipchat.com/docs/apiv2/method/send_room_notification)
     pub fn send_notification<T: AsRef<str>>(&self, room_id_or_name: T, notification: &Notification) -> Result<(), Error> {
         let body = serde_json::to_string(notification).unwrap();
