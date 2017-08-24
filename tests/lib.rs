@@ -65,3 +65,10 @@ fn integration_get_private_messages() {
     let messages = client.get_private_messages(&config.user.to_string(), None).unwrap();
     println!("messages: {:#?}", messages);
 }
+
+#[test]
+fn integration_get_recent_history() {
+    let (client, config) = setup();
+    let messages = client.get_recent_history(&config.room).unwrap();
+    println!("messages: {:#?}", messages);
+}
