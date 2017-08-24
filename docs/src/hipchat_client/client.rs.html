@@ -17,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc source">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -43,7 +43,7 @@
         </form>
     </nav>
 
-    <section id='main' class="content source"><pre class="line-numbers"><span id="1">  1</span>
+    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -259,221 +259,259 @@
 <span id="214">214</span>
 <span id="215">215</span>
 <span id="216">216</span>
-</pre><pre class='rust '>
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>io</span>::<span class='ident'>prelude</span>::<span class='kw-2'>*</span>;
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>BTreeMap</span>;
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>time</span>::<span class='ident'>Duration</span>;
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+</pre><pre class="rust ">
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">BTreeMap</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Duration</span>;
 
-<span class='kw'>use</span> <span class='ident'>hyper</span>::<span class='ident'>Client</span> <span class='kw'>as</span> <span class='ident'>HyperClient</span>;
-<span class='kw'>use</span> <span class='ident'>hyper</span>::<span class='ident'>net</span>::<span class='ident'>HttpsConnector</span>;
-<span class='kw'>use</span> <span class='ident'>hyper_native_tls</span>::<span class='ident'>NativeTlsClient</span>;
-<span class='kw'>use</span> <span class='ident'>hyper</span>::<span class='ident'>Url</span>;
-<span class='kw'>use</span> <span class='ident'>hyper</span>::<span class='ident'>header</span>::{<span class='ident'>Authorization</span>, <span class='ident'>Bearer</span>, <span class='ident'>ContentType</span>};
-<span class='kw'>use</span> <span class='ident'>hyper</span>::<span class='ident'>status</span>::<span class='ident'>StatusClass</span>;
-<span class='kw'>use</span> <span class='ident'>serde_json</span>::{<span class='self'>self</span>};
+<span class="kw">use</span> <span class="ident">hyper</span>::<span class="ident">Client</span> <span class="kw">as</span> <span class="ident">HyperClient</span>;
+<span class="kw">use</span> <span class="ident">hyper</span>::<span class="ident">net</span>::<span class="ident">HttpsConnector</span>;
+<span class="kw">use</span> <span class="ident">hyper_native_tls</span>::<span class="ident">NativeTlsClient</span>;
+<span class="kw">use</span> <span class="ident">hyper</span>::<span class="ident">Url</span>;
+<span class="kw">use</span> <span class="ident">hyper</span>::<span class="ident">header</span>::{<span class="ident">Authorization</span>, <span class="ident">Bearer</span>, <span class="ident">ContentType</span>};
+<span class="kw">use</span> <span class="ident">hyper</span>::<span class="ident">status</span>::<span class="ident">StatusClass</span>;
+<span class="kw">use</span> <span class="ident">serde_json</span>::{<span class="self">self</span>};
 
-<span class='kw'>use</span> <span class='ident'>emoticon</span>::<span class='ident'>Emoticon</span>;
-<span class='kw'>use</span> <span class='ident'>error</span>::<span class='ident'>Error</span>;
-<span class='kw'>use</span> <span class='ident'>room</span>::{<span class='ident'>RoomDetail</span>, <span class='ident'>RoomUpdate</span>, <span class='ident'>Rooms</span>, <span class='ident'>RoomsRequest</span>, <span class='ident'>Notification</span>};
-<span class='kw'>use</span> <span class='ident'>user</span>::{<span class='ident'>UserDetail</span>, <span class='ident'>Users</span>, <span class='ident'>UsersRequest</span>};
-<span class='kw'>use</span> <span class='ident'>message</span>::{<span class='ident'>Messages</span>, <span class='ident'>MessagesRequest</span>, <span class='ident'>SendMessageResponse</span>};
-<span class='kw'>use</span> <span class='ident'>util</span>::<span class='ident'>AppendToQueryParams</span>;
+<span class="kw">use</span> <span class="ident">emoticon</span>::<span class="ident">Emoticon</span>;
+<span class="kw">use</span> <span class="ident">error</span>::<span class="ident">Error</span>;
+<span class="kw">use</span> <span class="ident">room</span>::{<span class="ident">RoomDetail</span>, <span class="ident">RoomUpdate</span>, <span class="ident">Rooms</span>, <span class="ident">RoomsRequest</span>, <span class="ident">Notification</span>};
+<span class="kw">use</span> <span class="ident">user</span>::{<span class="ident">UserDetail</span>, <span class="ident">Users</span>, <span class="ident">UsersRequest</span>};
+<span class="kw">use</span> <span class="ident">message</span>::{<span class="ident">Messages</span>, <span class="ident">MessagesRequest</span>, <span class="ident">SendMessageResponse</span>};
+<span class="kw">use</span> <span class="ident">util</span>::<span class="ident">AppendToQueryParams</span>;
 
-<span class='kw'>const</span> <span class='ident'>DEFAULT_TIMEOUT</span>: <span class='ident'>u64</span> <span class='op'>=</span> <span class='number'>120</span>;
+<span class="kw">const</span> <span class="ident">DEFAULT_TIMEOUT</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">120</span>;
 
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Client</span> {
-    <span class='ident'>base_url</span>: <span class='ident'>String</span>,
-    <span class='ident'>auth</span>: <span class='ident'>Authorization</span><span class='op'>&lt;</span><span class='ident'>Bearer</span><span class='op'>&gt;</span>,
-    <span class='ident'>hyper_client</span>: <span class='ident'>HyperClient</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Client</span> {
+    <span class="ident">base_url</span>: <span class="ident">String</span>,
+    <span class="ident">auth</span>: <span class="ident">Authorization</span><span class="op">&lt;</span><span class="ident">Bearer</span><span class="op">&gt;</span>,
+    <span class="ident">hyper_client</span>: <span class="ident">HyperClient</span>
 }
 
-<span class='kw'>impl</span> <span class='ident'>Client</span> {
-    <span class='doccomment'>/// Creates a new HipChat API v2 client</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Into</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>, <span class='ident'>O</span>: <span class='ident'>AsRef</span><span class='op'>&lt;</span><span class='ident'>str</span><span class='op'>&gt;&gt;</span>(<span class='ident'>origin</span>: <span class='ident'>O</span>, <span class='ident'>token</span>: <span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span> {
-        <span class='kw'>let</span> <span class='ident'>duration</span> <span class='op'>=</span> <span class='ident'>Duration</span>::<span class='ident'>new</span>(<span class='ident'>DEFAULT_TIMEOUT</span>, <span class='number'>0</span>);
-        <span class='ident'>Client</span>::<span class='ident'>with_timeouts</span>(<span class='ident'>origin</span>, <span class='ident'>token</span>, <span class='ident'>duration</span>)
+<span class="kw">impl</span> <span class="ident">Client</span> {
+    <span class="doccomment">/// Creates a new HipChat API v2 client</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>, <span class="ident">O</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="ident">origin</span>: <span class="ident">O</span>, <span class="ident">token</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="kw">let</span> <span class="ident">duration</span> <span class="op">=</span> <span class="ident">Duration</span>::<span class="ident">new</span>(<span class="ident">DEFAULT_TIMEOUT</span>, <span class="number">0</span>);
+        <span class="ident">Client</span>::<span class="ident">with_timeouts</span>(<span class="ident">origin</span>, <span class="ident">token</span>, <span class="ident">duration</span>)
     }
-    <span class='doccomment'>/// Creates a new HipChat API v2 client with the specified Hyper client</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>with_hyper_client</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Into</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>, <span class='ident'>O</span>: <span class='ident'>AsRef</span><span class='op'>&lt;</span><span class='ident'>str</span><span class='op'>&gt;&gt;</span>(<span class='ident'>origin</span>: <span class='ident'>O</span>, <span class='ident'>token</span>: <span class='ident'>T</span>, <span class='ident'>hyper_client</span>: <span class='ident'>HyperClient</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span> {
-        <span class='ident'>Client</span> {
-            <span class='ident'>base_url</span>: <span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}/v2&quot;</span>, <span class='ident'>origin</span>.<span class='ident'>as_ref</span>()),
-            <span class='ident'>auth</span>: <span class='ident'>Authorization</span>(<span class='ident'>Bearer</span> { <span class='ident'>token</span>: <span class='ident'>token</span>.<span class='ident'>into</span>() }),
-            <span class='ident'>hyper_client</span>: <span class='ident'>hyper_client</span>
+    <span class="doccomment">/// Creates a new HipChat API v2 client with the specified Hyper client</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_hyper_client</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>, <span class="ident">O</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="ident">origin</span>: <span class="ident">O</span>, <span class="ident">token</span>: <span class="ident">T</span>, <span class="ident">hyper_client</span>: <span class="ident">HyperClient</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="ident">Client</span> {
+            <span class="ident">base_url</span>: <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}/v2&quot;</span>, <span class="ident">origin</span>.<span class="ident">as_ref</span>()),
+            <span class="ident">auth</span>: <span class="ident">Authorization</span>(<span class="ident">Bearer</span> { <span class="ident">token</span>: <span class="ident">token</span>.<span class="ident">into</span>() }),
+            <span class="ident">hyper_client</span>: <span class="ident">hyper_client</span>
         }
     }
-    <span class='doccomment'>/// Creates a new HipChat API v2 client that has read and write timeouts</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>with_timeouts</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Into</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>, <span class='ident'>O</span>: <span class='ident'>AsRef</span><span class='op'>&lt;</span><span class='ident'>str</span><span class='op'>&gt;&gt;</span>(<span class='ident'>origin</span>: <span class='ident'>O</span>, <span class='ident'>token</span>: <span class='ident'>T</span>, <span class='ident'>duration</span>: <span class='ident'>Duration</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span> {
-        <span class='kw'>let</span> <span class='ident'>ssl</span> <span class='op'>=</span> <span class='ident'>NativeTlsClient</span>::<span class='ident'>new</span>().<span class='ident'>unwrap</span>();
-        <span class='kw'>let</span> <span class='ident'>connector</span> <span class='op'>=</span> <span class='ident'>HttpsConnector</span>::<span class='ident'>new</span>(<span class='ident'>ssl</span>);
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>hyper_client</span> <span class='op'>=</span> <span class='ident'>HyperClient</span>::<span class='ident'>with_connector</span>(<span class='ident'>connector</span>);
-        <span class='ident'>hyper_client</span>.<span class='ident'>set_read_timeout</span>(<span class='prelude-val'>Some</span>(<span class='ident'>duration</span>));
-        <span class='ident'>hyper_client</span>.<span class='ident'>set_write_timeout</span>(<span class='prelude-val'>Some</span>(<span class='ident'>duration</span>));
+    <span class="doccomment">/// Creates a new HipChat API v2 client that has read and write timeouts</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_timeouts</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>, <span class="ident">O</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="ident">origin</span>: <span class="ident">O</span>, <span class="ident">token</span>: <span class="ident">T</span>, <span class="ident">duration</span>: <span class="ident">Duration</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="kw">let</span> <span class="ident">ssl</span> <span class="op">=</span> <span class="ident">NativeTlsClient</span>::<span class="ident">new</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">connector</span> <span class="op">=</span> <span class="ident">HttpsConnector</span>::<span class="ident">new</span>(<span class="ident">ssl</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hyper_client</span> <span class="op">=</span> <span class="ident">HyperClient</span>::<span class="ident">with_connector</span>(<span class="ident">connector</span>);
+        <span class="ident">hyper_client</span>.<span class="ident">set_read_timeout</span>(<span class="prelude-val">Some</span>(<span class="ident">duration</span>));
+        <span class="ident">hyper_client</span>.<span class="ident">set_write_timeout</span>(<span class="prelude-val">Some</span>(<span class="ident">duration</span>));
 
-        <span class='ident'>Client</span> {
-            <span class='ident'>base_url</span>: <span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}/v2&quot;</span>, <span class='ident'>origin</span>.<span class='ident'>as_ref</span>()),
-            <span class='ident'>auth</span>: <span class='ident'>Authorization</span>(<span class='ident'>Bearer</span> { <span class='ident'>token</span>: <span class='ident'>token</span>.<span class='ident'>into</span>() }),
-            <span class='ident'>hyper_client</span>: <span class='ident'>hyper_client</span>
+        <span class="ident">Client</span> {
+            <span class="ident">base_url</span>: <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}/v2&quot;</span>, <span class="ident">origin</span>.<span class="ident">as_ref</span>()),
+            <span class="ident">auth</span>: <span class="ident">Authorization</span>(<span class="ident">Bearer</span> { <span class="ident">token</span>: <span class="ident">token</span>.<span class="ident">into</span>() }),
+            <span class="ident">hyper_client</span>: <span class="ident">hyper_client</span>
         }
     }
-    <span class='doccomment'>/// [Get emoticon](https://www.hipchat.com/docs/apiv2/method/get_emoticon)</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_emoticon</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>AsRef</span><span class='op'>&lt;</span><span class='ident'>str</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>emoticon_id_or_shortcut</span>: <span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Emoticon</span>, <span class='ident'>Error</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>res</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>hyper_client</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}/emoticon/{}&quot;</span>, <span class='self'>self</span>.<span class='ident'>base_url</span>, <span class='ident'>emoticon_id_or_shortcut</span>.<span class='ident'>as_ref</span>()))
-            .<span class='ident'>header</span>(<span class='self'>self</span>.<span class='ident'>auth</span>.<span class='ident'>to_owned</span>())
-            .<span class='ident'>send</span>());
+    <span class="doccomment">/// [Get emoticon](https://www.hipchat.com/docs/apiv2/method/get_emoticon)</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_emoticon</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">emoticon_id_or_shortcut</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Emoticon</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">hyper_client</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}/emoticon/{}&quot;</span>, <span class="self">self</span>.<span class="ident">base_url</span>, <span class="ident">emoticon_id_or_shortcut</span>.<span class="ident">as_ref</span>()))
+            .<span class="ident">header</span>(<span class="self">self</span>.<span class="ident">auth</span>.<span class="ident">to_owned</span>())
+            .<span class="ident">send</span>());
 
-        <span class='kw'>if</span> <span class='ident'>res</span>.<span class='ident'>status</span>.<span class='ident'>class</span>() <span class='op'>!=</span> <span class='ident'>StatusClass</span>::<span class='ident'>Success</span> {
-            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>Error</span>::<span class='ident'>HttpStatus</span>(<span class='ident'>res</span>.<span class='ident'>status</span>));
+        <span class="kw">if</span> <span class="ident">res</span>.<span class="ident">status</span>.<span class="ident">class</span>() <span class="op">!=</span> <span class="ident">StatusClass</span>::<span class="ident">Success</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">HttpStatus</span>(<span class="ident">res</span>.<span class="ident">status</span>));
         }
 
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>body</span> <span class='op'>=</span> <span class='ident'>String</span>::<span class='ident'>new</span>();
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>res</span>.<span class='ident'>read_to_string</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>body</span>));
-        <span class='kw'>let</span> <span class='ident'>emoticon</span>: <span class='ident'>Emoticon</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serde_json</span>::<span class='ident'>from_str</span>(<span class='kw-2'>&amp;</span><span class='ident'>body</span>));
-        <span class='prelude-val'>Ok</span>(<span class='ident'>emoticon</span>)
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">body</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
+        <span class="macro">try</span><span class="macro">!</span>(<span class="ident">res</span>.<span class="ident">read_to_string</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">body</span>));
+        <span class="kw">let</span> <span class="ident">emoticon</span>: <span class="ident">Emoticon</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">serde_json</span>::<span class="ident">from_str</span>(<span class="kw-2">&amp;</span><span class="ident">body</span>));
+        <span class="prelude-val">Ok</span>(<span class="ident">emoticon</span>)
     }
-    <span class='doccomment'>/// [Get room](https://www.hipchat.com/docs/apiv2/method/get_room)</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_room</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>AsRef</span><span class='op'>&lt;</span><span class='ident'>str</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>room_id_or_name</span>: <span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>RoomDetail</span>, <span class='ident'>Error</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>res</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>hyper_client</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}/room/{}&quot;</span>, <span class='self'>self</span>.<span class='ident'>base_url</span>, <span class='ident'>room_id_or_name</span>.<span class='ident'>as_ref</span>()))
-            .<span class='ident'>header</span>(<span class='self'>self</span>.<span class='ident'>auth</span>.<span class='ident'>to_owned</span>())
-            .<span class='ident'>send</span>());
+    <span class="doccomment">/// [Get room](https://www.hipchat.com/docs/apiv2/method/get_room)</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_room</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">room_id_or_name</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">RoomDetail</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">hyper_client</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}/room/{}&quot;</span>, <span class="self">self</span>.<span class="ident">base_url</span>, <span class="ident">room_id_or_name</span>.<span class="ident">as_ref</span>()))
+            .<span class="ident">header</span>(<span class="self">self</span>.<span class="ident">auth</span>.<span class="ident">to_owned</span>())
+            .<span class="ident">send</span>());
 
-        <span class='kw'>if</span> <span class='ident'>res</span>.<span class='ident'>status</span>.<span class='ident'>class</span>() <span class='op'>!=</span> <span class='ident'>StatusClass</span>::<span class='ident'>Success</span> {
-            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>Error</span>::<span class='ident'>HttpStatus</span>(<span class='ident'>res</span>.<span class='ident'>status</span>));
+        <span class="kw">if</span> <span class="ident">res</span>.<span class="ident">status</span>.<span class="ident">class</span>() <span class="op">!=</span> <span class="ident">StatusClass</span>::<span class="ident">Success</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">HttpStatus</span>(<span class="ident">res</span>.<span class="ident">status</span>));
         }
 
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>body</span> <span class='op'>=</span> <span class='ident'>String</span>::<span class='ident'>new</span>();
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>res</span>.<span class='ident'>read_to_string</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>body</span>));
-        <span class='kw'>let</span> <span class='ident'>room</span>: <span class='ident'>RoomDetail</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serde_json</span>::<span class='ident'>from_str</span>(<span class='kw-2'>&amp;</span><span class='ident'>body</span>));
-        <span class='prelude-val'>Ok</span>(<span class='ident'>room</span>)
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">body</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
+        <span class="macro">try</span><span class="macro">!</span>(<span class="ident">res</span>.<span class="ident">read_to_string</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">body</span>));
+        <span class="kw">let</span> <span class="ident">room</span>: <span class="ident">RoomDetail</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">serde_json</span>::<span class="ident">from_str</span>(<span class="kw-2">&amp;</span><span class="ident">body</span>));
+        <span class="prelude-val">Ok</span>(<span class="ident">room</span>)
     }
-    <span class='doccomment'>/// [Update room](https://www.hipchat.com/docs/apiv2/method/update_room)</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>update_room</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>AsRef</span><span class='op'>&lt;</span><span class='ident'>str</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>room_id_or_name</span>: <span class='ident'>T</span>, <span class='ident'>req</span>: <span class='kw-2'>&amp;</span><span class='ident'>RoomUpdate</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>Error</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>body</span> <span class='op'>=</span> <span class='ident'>serde_json</span>::<span class='ident'>to_string</span>(<span class='ident'>req</span>).<span class='ident'>unwrap</span>();
-        <span class='kw'>let</span> <span class='ident'>res</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>hyper_client</span>.<span class='ident'>put</span>(<span class='kw-2'>&amp;</span><span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}/room/{}&quot;</span>, <span class='self'>self</span>.<span class='ident'>base_url</span>, <span class='ident'>room_id_or_name</span>.<span class='ident'>as_ref</span>()))
-            .<span class='ident'>header</span>(<span class='self'>self</span>.<span class='ident'>auth</span>.<span class='ident'>to_owned</span>())
-            .<span class='ident'>header</span>(<span class='ident'>ContentType</span>::<span class='ident'>json</span>())
-            .<span class='ident'>body</span>(<span class='ident'>body</span>.<span class='ident'>as_bytes</span>())
-            .<span class='ident'>send</span>());
+    <span class="doccomment">/// [Update room](https://www.hipchat.com/docs/apiv2/method/update_room)</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_room</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">room_id_or_name</span>: <span class="ident">T</span>, <span class="ident">req</span>: <span class="kw-2">&amp;</span><span class="ident">RoomUpdate</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">body</span> <span class="op">=</span> <span class="ident">serde_json</span>::<span class="ident">to_string</span>(<span class="ident">req</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">hyper_client</span>.<span class="ident">put</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}/room/{}&quot;</span>, <span class="self">self</span>.<span class="ident">base_url</span>, <span class="ident">room_id_or_name</span>.<span class="ident">as_ref</span>()))
+            .<span class="ident">header</span>(<span class="self">self</span>.<span class="ident">auth</span>.<span class="ident">to_owned</span>())
+            .<span class="ident">header</span>(<span class="ident">ContentType</span>::<span class="ident">json</span>())
+            .<span class="ident">body</span>(<span class="ident">body</span>.<span class="ident">as_bytes</span>())
+            .<span class="ident">send</span>());
 
-        <span class='kw'>if</span> <span class='ident'>res</span>.<span class='ident'>status</span>.<span class='ident'>class</span>() <span class='op'>!=</span> <span class='ident'>StatusClass</span>::<span class='ident'>Success</span> {
-            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>Error</span>::<span class='ident'>HttpStatus</span>(<span class='ident'>res</span>.<span class='ident'>status</span>));
+        <span class="kw">if</span> <span class="ident">res</span>.<span class="ident">status</span>.<span class="ident">class</span>() <span class="op">!=</span> <span class="ident">StatusClass</span>::<span class="ident">Success</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">HttpStatus</span>(<span class="ident">res</span>.<span class="ident">status</span>));
         }
 
-        <span class='prelude-val'>Ok</span>(())
+        <span class="prelude-val">Ok</span>(())
     }
-    <span class='doccomment'>/// [Delete room](https://www.hipchat.com/docs/apiv2/method/delete_room)</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>delete_room</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>AsRef</span><span class='op'>&lt;</span><span class='ident'>str</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>room_id_or_name</span>: <span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>Error</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>res</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>hyper_client</span>.<span class='ident'>delete</span>(<span class='kw-2'>&amp;</span><span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}/room/{}&quot;</span>, <span class='self'>self</span>.<span class='ident'>base_url</span>, <span class='ident'>room_id_or_name</span>.<span class='ident'>as_ref</span>()))
-            .<span class='ident'>header</span>(<span class='self'>self</span>.<span class='ident'>auth</span>.<span class='ident'>to_owned</span>())
-            .<span class='ident'>send</span>());
+    <span class="doccomment">/// [Delete room](https://www.hipchat.com/docs/apiv2/method/delete_room)</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">delete_room</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">room_id_or_name</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">hyper_client</span>.<span class="ident">delete</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}/room/{}&quot;</span>, <span class="self">self</span>.<span class="ident">base_url</span>, <span class="ident">room_id_or_name</span>.<span class="ident">as_ref</span>()))
+            .<span class="ident">header</span>(<span class="self">self</span>.<span class="ident">auth</span>.<span class="ident">to_owned</span>())
+            .<span class="ident">send</span>());
 
-        <span class='kw'>if</span> <span class='ident'>res</span>.<span class='ident'>status</span>.<span class='ident'>class</span>() <span class='op'>!=</span> <span class='ident'>StatusClass</span>::<span class='ident'>Success</span> {
-            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>Error</span>::<span class='ident'>HttpStatus</span>(<span class='ident'>res</span>.<span class='ident'>status</span>));
+        <span class="kw">if</span> <span class="ident">res</span>.<span class="ident">status</span>.<span class="ident">class</span>() <span class="op">!=</span> <span class="ident">StatusClass</span>::<span class="ident">Success</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">HttpStatus</span>(<span class="ident">res</span>.<span class="ident">status</span>));
         }
-        <span class='prelude-val'>Ok</span>(())
+        <span class="prelude-val">Ok</span>(())
     }
-    <span class='doccomment'>/// [Get all rooms](https://www.hipchat.com/docs/apiv2/method/get_all_rooms)</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_rooms</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>req</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='ident'>RoomsRequest</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Rooms</span>, <span class='ident'>Error</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>url</span> <span class='op'>=</span> <span class='ident'>Url</span>::<span class='ident'>parse</span>(<span class='kw-2'>&amp;</span><span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}/room&quot;</span>, <span class='self'>self</span>.<span class='ident'>base_url</span>)).<span class='ident'>unwrap</span>();
-        <span class='ident'>req</span>.<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>rooms_request</span><span class='op'>|</span> <span class='ident'>rooms_request</span>.<span class='ident'>append_to</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>url</span>.<span class='ident'>query_pairs_mut</span>()));
+    <span class="doccomment">/// [Get all rooms](https://www.hipchat.com/docs/apiv2/method/get_all_rooms)</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_rooms</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">req</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">RoomsRequest</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Rooms</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">url</span> <span class="op">=</span> <span class="ident">Url</span>::<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}/room&quot;</span>, <span class="self">self</span>.<span class="ident">base_url</span>)).<span class="ident">unwrap</span>();
+        <span class="ident">req</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">rooms_request</span><span class="op">|</span> <span class="ident">rooms_request</span>.<span class="ident">append_to</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">url</span>.<span class="ident">query_pairs_mut</span>()));
 
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>res</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>hyper_client</span>.<span class='ident'>get</span>(<span class='ident'>url</span>)
-            .<span class='ident'>header</span>(<span class='self'>self</span>.<span class='ident'>auth</span>.<span class='ident'>to_owned</span>())
-            .<span class='ident'>send</span>());
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">hyper_client</span>.<span class="ident">get</span>(<span class="ident">url</span>)
+            .<span class="ident">header</span>(<span class="self">self</span>.<span class="ident">auth</span>.<span class="ident">to_owned</span>())
+            .<span class="ident">send</span>());
 
-        <span class='kw'>if</span> <span class='ident'>res</span>.<span class='ident'>status</span>.<span class='ident'>class</span>() <span class='op'>!=</span> <span class='ident'>StatusClass</span>::<span class='ident'>Success</span> {
-            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>Error</span>::<span class='ident'>HttpStatus</span>(<span class='ident'>res</span>.<span class='ident'>status</span>));
+        <span class="kw">if</span> <span class="ident">res</span>.<span class="ident">status</span>.<span class="ident">class</span>() <span class="op">!=</span> <span class="ident">StatusClass</span>::<span class="ident">Success</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">HttpStatus</span>(<span class="ident">res</span>.<span class="ident">status</span>));
         }
 
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>body</span> <span class='op'>=</span> <span class='ident'>String</span>::<span class='ident'>new</span>();
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>res</span>.<span class='ident'>read_to_string</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>body</span>));
-        <span class='kw'>let</span> <span class='ident'>rooms</span>: <span class='ident'>Rooms</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serde_json</span>::<span class='ident'>from_str</span>(<span class='kw-2'>&amp;</span><span class='ident'>body</span>));
-        <span class='prelude-val'>Ok</span>(<span class='ident'>rooms</span>)
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">body</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
+        <span class="macro">try</span><span class="macro">!</span>(<span class="ident">res</span>.<span class="ident">read_to_string</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">body</span>));
+        <span class="kw">let</span> <span class="ident">rooms</span>: <span class="ident">Rooms</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">serde_json</span>::<span class="ident">from_str</span>(<span class="kw-2">&amp;</span><span class="ident">body</span>));
+        <span class="prelude-val">Ok</span>(<span class="ident">rooms</span>)
     }
-    <span class='doccomment'>/// [Send message](https://www.hipchat.com/docs/apiv2/method/send_message)</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>send_message</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>AsRef</span><span class='op'>&lt;</span><span class='ident'>str</span><span class='op'>&gt;</span>, <span class='ident'>U</span>: <span class='ident'>Into</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>room_id_or_name</span>: <span class='ident'>T</span>, <span class='ident'>message</span>: <span class='ident'>U</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>SendMessageResponse</span>, <span class='ident'>Error</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>obj</span> <span class='op'>=</span> <span class='ident'>BTreeMap</span>::<span class='ident'>new</span>();
-        <span class='ident'>obj</span>.<span class='ident'>insert</span>(<span class='string'>&quot;message&quot;</span>.<span class='ident'>to_owned</span>(), <span class='ident'>message</span>.<span class='ident'>into</span>());
-        <span class='kw'>let</span> <span class='ident'>body</span> <span class='op'>=</span> <span class='ident'>serde_json</span>::<span class='ident'>to_string</span>(<span class='kw-2'>&amp;</span><span class='ident'>obj</span>).<span class='ident'>unwrap</span>();
+    <span class="doccomment">/// [Send message](https://www.hipchat.com/docs/apiv2/method/send_message)</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">send_message</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">U</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">room_id_or_name</span>: <span class="ident">T</span>, <span class="ident">message</span>: <span class="ident">U</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">SendMessageResponse</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">obj</span> <span class="op">=</span> <span class="ident">BTreeMap</span>::<span class="ident">new</span>();
+        <span class="ident">obj</span>.<span class="ident">insert</span>(<span class="string">&quot;message&quot;</span>.<span class="ident">to_owned</span>(), <span class="ident">message</span>.<span class="ident">into</span>());
+        <span class="kw">let</span> <span class="ident">body</span> <span class="op">=</span> <span class="ident">serde_json</span>::<span class="ident">to_string</span>(<span class="kw-2">&amp;</span><span class="ident">obj</span>).<span class="ident">unwrap</span>();
 
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>res</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>hyper_client</span>.<span class='ident'>post</span>(<span class='kw-2'>&amp;</span><span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}/room/{}/message&quot;</span>, <span class='self'>self</span>.<span class='ident'>base_url</span>, <span class='ident'>room_id_or_name</span>.<span class='ident'>as_ref</span>()))
-            .<span class='ident'>header</span>(<span class='self'>self</span>.<span class='ident'>auth</span>.<span class='ident'>to_owned</span>())
-            .<span class='ident'>header</span>(<span class='ident'>ContentType</span>::<span class='ident'>json</span>())
-            .<span class='ident'>body</span>(<span class='ident'>body</span>.<span class='ident'>as_bytes</span>())
-            .<span class='ident'>send</span>());
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">hyper_client</span>.<span class="ident">post</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}/room/{}/message&quot;</span>, <span class="self">self</span>.<span class="ident">base_url</span>, <span class="ident">room_id_or_name</span>.<span class="ident">as_ref</span>()))
+            .<span class="ident">header</span>(<span class="self">self</span>.<span class="ident">auth</span>.<span class="ident">to_owned</span>())
+            .<span class="ident">header</span>(<span class="ident">ContentType</span>::<span class="ident">json</span>())
+            .<span class="ident">body</span>(<span class="ident">body</span>.<span class="ident">as_bytes</span>())
+            .<span class="ident">send</span>());
 
-        <span class='kw'>if</span> <span class='ident'>res</span>.<span class='ident'>status</span>.<span class='ident'>class</span>() <span class='op'>!=</span> <span class='ident'>StatusClass</span>::<span class='ident'>Success</span> {
-            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>Error</span>::<span class='ident'>HttpStatus</span>(<span class='ident'>res</span>.<span class='ident'>status</span>));
+        <span class="kw">if</span> <span class="ident">res</span>.<span class="ident">status</span>.<span class="ident">class</span>() <span class="op">!=</span> <span class="ident">StatusClass</span>::<span class="ident">Success</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">HttpStatus</span>(<span class="ident">res</span>.<span class="ident">status</span>));
         }
 
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>body</span> <span class='op'>=</span> <span class='ident'>String</span>::<span class='ident'>new</span>();
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>res</span>.<span class='ident'>read_to_string</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>body</span>));
-        <span class='kw'>let</span> <span class='ident'>msg</span>: <span class='ident'>SendMessageResponse</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serde_json</span>::<span class='ident'>from_str</span>(<span class='kw-2'>&amp;</span><span class='ident'>body</span>)); 
-        <span class='prelude-val'>Ok</span>(<span class='ident'>msg</span>)
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">body</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
+        <span class="macro">try</span><span class="macro">!</span>(<span class="ident">res</span>.<span class="ident">read_to_string</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">body</span>));
+        <span class="kw">let</span> <span class="ident">msg</span>: <span class="ident">SendMessageResponse</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">serde_json</span>::<span class="ident">from_str</span>(<span class="kw-2">&amp;</span><span class="ident">body</span>)); 
+        <span class="prelude-val">Ok</span>(<span class="ident">msg</span>)
     }
-    <span class='doccomment'>/// [Get Private Messages](https://www.hipchat.com/docs/apiv2/method/view_privatechat_history)</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_private_messages</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>AsRef</span><span class='op'>&lt;</span><span class='ident'>str</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>user_id_or_email</span>: <span class='ident'>T</span>, <span class='ident'>req</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='ident'>MessagesRequest</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Messages</span>, <span class='ident'>Error</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>url</span> <span class='op'>=</span> <span class='ident'>Url</span>::<span class='ident'>parse</span>(<span class='kw-2'>&amp;</span><span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}/user/{}/history&quot;</span>, <span class='self'>self</span>.<span class='ident'>base_url</span>, <span class='ident'>user_id_or_email</span>.<span class='ident'>as_ref</span>())).<span class='ident'>unwrap</span>();
-        <span class='ident'>req</span>.<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>messages_request</span><span class='op'>|</span> <span class='ident'>messages_request</span>.<span class='ident'>append_to</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>url</span>.<span class='ident'>query_pairs_mut</span>()));
+    <span class="doccomment">/// [Get Private Messages](https://www.hipchat.com/docs/apiv2/method/view_privatechat_history)</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_private_messages</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">user_id_or_email</span>: <span class="ident">T</span>, <span class="ident">req</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">MessagesRequest</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Messages</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">url</span> <span class="op">=</span> <span class="ident">Url</span>::<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}/user/{}/history&quot;</span>, <span class="self">self</span>.<span class="ident">base_url</span>, <span class="ident">user_id_or_email</span>.<span class="ident">as_ref</span>())).<span class="ident">unwrap</span>();
+        <span class="ident">req</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">messages_request</span><span class="op">|</span> <span class="ident">messages_request</span>.<span class="ident">append_to</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">url</span>.<span class="ident">query_pairs_mut</span>()));
 
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>res</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>hyper_client</span>.<span class='ident'>get</span>(<span class='ident'>url</span>)
-            .<span class='ident'>header</span>(<span class='self'>self</span>.<span class='ident'>auth</span>.<span class='ident'>to_owned</span>())
-            .<span class='ident'>send</span>());
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">hyper_client</span>.<span class="ident">get</span>(<span class="ident">url</span>)
+            .<span class="ident">header</span>(<span class="self">self</span>.<span class="ident">auth</span>.<span class="ident">to_owned</span>())
+            .<span class="ident">send</span>());
 
-        <span class='kw'>if</span> <span class='ident'>res</span>.<span class='ident'>status</span>.<span class='ident'>class</span>() <span class='op'>!=</span> <span class='ident'>StatusClass</span>::<span class='ident'>Success</span> {
-            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>Error</span>::<span class='ident'>HttpStatus</span>(<span class='ident'>res</span>.<span class='ident'>status</span>));
+        <span class="kw">if</span> <span class="ident">res</span>.<span class="ident">status</span>.<span class="ident">class</span>() <span class="op">!=</span> <span class="ident">StatusClass</span>::<span class="ident">Success</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">HttpStatus</span>(<span class="ident">res</span>.<span class="ident">status</span>));
         }
 
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>body</span> <span class='op'>=</span> <span class='ident'>String</span>::<span class='ident'>new</span>();
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>res</span>.<span class='ident'>read_to_string</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>body</span>));
-        <span class='kw'>let</span> <span class='ident'>private_message</span>: <span class='ident'>Messages</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serde_json</span>::<span class='ident'>from_str</span>(<span class='kw-2'>&amp;</span><span class='ident'>body</span>));
-        <span class='prelude-val'>Ok</span>(<span class='ident'>private_message</span>)
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">body</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
+        <span class="macro">try</span><span class="macro">!</span>(<span class="ident">res</span>.<span class="ident">read_to_string</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">body</span>));
+        <span class="kw">let</span> <span class="ident">private_message</span>: <span class="ident">Messages</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">serde_json</span>::<span class="ident">from_str</span>(<span class="kw-2">&amp;</span><span class="ident">body</span>));
+        <span class="prelude-val">Ok</span>(<span class="ident">private_message</span>)
     }
-    <span class='doccomment'>/// [Send room notification](https://www.hipchat.com/docs/apiv2/method/send_room_notification)</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>send_notification</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>AsRef</span><span class='op'>&lt;</span><span class='ident'>str</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>room_id_or_name</span>: <span class='ident'>T</span>, <span class='ident'>notification</span>: <span class='kw-2'>&amp;</span><span class='ident'>Notification</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>Error</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>body</span> <span class='op'>=</span> <span class='ident'>serde_json</span>::<span class='ident'>to_string</span>(<span class='ident'>notification</span>).<span class='ident'>unwrap</span>();
-        <span class='kw'>let</span> <span class='ident'>res</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>hyper_client</span>.<span class='ident'>post</span>(<span class='kw-2'>&amp;</span><span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}/room/{}/notification&quot;</span>, <span class='self'>self</span>.<span class='ident'>base_url</span>, <span class='ident'>room_id_or_name</span>.<span class='ident'>as_ref</span>()))
-            .<span class='ident'>header</span>(<span class='self'>self</span>.<span class='ident'>auth</span>.<span class='ident'>to_owned</span>())
-            .<span class='ident'>header</span>(<span class='ident'>ContentType</span>::<span class='ident'>json</span>())
-            .<span class='ident'>body</span>(<span class='ident'>body</span>.<span class='ident'>as_bytes</span>())
-            .<span class='ident'>send</span>());
 
-        <span class='kw'>if</span> <span class='ident'>res</span>.<span class='ident'>status</span>.<span class='ident'>class</span>() <span class='op'>!=</span> <span class='ident'>StatusClass</span>::<span class='ident'>Success</span> {
-            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>Error</span>::<span class='ident'>HttpStatus</span>(<span class='ident'>res</span>.<span class='ident'>status</span>));
+    <span class="doccomment">/// [View recent room history](https://www.hipchat.com/docs/apiv2/method/view_recent_room_history)</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_recent_history</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">room_id_or_name</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Messages</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">url</span> <span class="op">=</span> <span class="ident">Url</span>::<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}/room/{}/history/latest&quot;</span>, <span class="self">self</span>.<span class="ident">base_url</span>, <span class="ident">room_id_or_name</span>.<span class="ident">as_ref</span>())).<span class="ident">unwrap</span>();
+
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">hyper_client</span>.<span class="ident">get</span>(<span class="ident">url</span>)
+            .<span class="ident">header</span>(<span class="self">self</span>.<span class="ident">auth</span>.<span class="ident">to_owned</span>())
+            .<span class="ident">send</span>());
+
+        <span class="kw">if</span> <span class="ident">res</span>.<span class="ident">status</span>.<span class="ident">class</span>() <span class="op">!=</span> <span class="ident">StatusClass</span>::<span class="ident">Success</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">HttpStatus</span>(<span class="ident">res</span>.<span class="ident">status</span>));
         }
-        <span class='prelude-val'>Ok</span>(())
+
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">body</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
+        <span class="macro">try</span><span class="macro">!</span>(<span class="ident">res</span>.<span class="ident">read_to_string</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">body</span>));
+        <span class="kw">let</span> <span class="ident">recent_messages</span>: <span class="ident">Messages</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">serde_json</span>::<span class="ident">from_str</span>(<span class="kw-2">&amp;</span><span class="ident">body</span>));
+        <span class="prelude-val">Ok</span>(<span class="ident">recent_messages</span>)
     }
-    <span class='doccomment'>/// [Get all users](https://www.hipchat.com/docs/apiv2/method/get_all_users)</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_users</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>req</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='ident'>UsersRequest</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Users</span>, <span class='ident'>Error</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>url</span> <span class='op'>=</span> <span class='ident'>Url</span>::<span class='ident'>parse</span>(<span class='kw-2'>&amp;</span><span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}/user&quot;</span>, <span class='self'>self</span>.<span class='ident'>base_url</span>)).<span class='ident'>unwrap</span>();
-        <span class='ident'>req</span>.<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>users_request</span><span class='op'>|</span> <span class='ident'>users_request</span>.<span class='ident'>append_to</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>url</span>.<span class='ident'>query_pairs_mut</span>()));
 
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>res</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>hyper_client</span>.<span class='ident'>get</span>(<span class='ident'>url</span>)
-            .<span class='ident'>header</span>(<span class='self'>self</span>.<span class='ident'>auth</span>.<span class='ident'>to_owned</span>())
-            .<span class='ident'>send</span>());
+    <span class="doccomment">/// [Send room notification](https://www.hipchat.com/docs/apiv2/method/send_room_notification)</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">send_notification</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">room_id_or_name</span>: <span class="ident">T</span>, <span class="ident">notification</span>: <span class="kw-2">&amp;</span><span class="ident">Notification</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">body</span> <span class="op">=</span> <span class="ident">serde_json</span>::<span class="ident">to_string</span>(<span class="ident">notification</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">hyper_client</span>.<span class="ident">post</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}/room/{}/notification&quot;</span>, <span class="self">self</span>.<span class="ident">base_url</span>, <span class="ident">room_id_or_name</span>.<span class="ident">as_ref</span>()))
+            .<span class="ident">header</span>(<span class="self">self</span>.<span class="ident">auth</span>.<span class="ident">to_owned</span>())
+            .<span class="ident">header</span>(<span class="ident">ContentType</span>::<span class="ident">json</span>())
+            .<span class="ident">body</span>(<span class="ident">body</span>.<span class="ident">as_bytes</span>())
+            .<span class="ident">send</span>());
 
-        <span class='kw'>if</span> <span class='ident'>res</span>.<span class='ident'>status</span>.<span class='ident'>class</span>() <span class='op'>!=</span> <span class='ident'>StatusClass</span>::<span class='ident'>Success</span> {
-            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>Error</span>::<span class='ident'>HttpStatus</span>(<span class='ident'>res</span>.<span class='ident'>status</span>));
+        <span class="kw">if</span> <span class="ident">res</span>.<span class="ident">status</span>.<span class="ident">class</span>() <span class="op">!=</span> <span class="ident">StatusClass</span>::<span class="ident">Success</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">HttpStatus</span>(<span class="ident">res</span>.<span class="ident">status</span>));
         }
-
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>body</span> <span class='op'>=</span> <span class='ident'>String</span>::<span class='ident'>new</span>();
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>res</span>.<span class='ident'>read_to_string</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>body</span>));
-        <span class='kw'>let</span> <span class='ident'>users</span>: <span class='ident'>Users</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serde_json</span>::<span class='ident'>from_str</span>(<span class='kw-2'>&amp;</span><span class='ident'>body</span>));
-        <span class='prelude-val'>Ok</span>(<span class='ident'>users</span>)
+        <span class="prelude-val">Ok</span>(())
     }
-    <span class='doccomment'>/// [Get user](https://www.hipchat.com/docs/apiv2/method/view_user)</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_user</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>AsRef</span><span class='op'>&lt;</span><span class='ident'>str</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>user_id_or_name</span>: <span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>UserDetail</span>, <span class='ident'>Error</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>res</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>hyper_client</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}/user/{}&quot;</span>, <span class='self'>self</span>.<span class='ident'>base_url</span>, <span class='ident'>user_id_or_name</span>.<span class='ident'>as_ref</span>()))
-            .<span class='ident'>header</span>(<span class='self'>self</span>.<span class='ident'>auth</span>.<span class='ident'>to_owned</span>())
-            .<span class='ident'>send</span>());
+    <span class="doccomment">/// [Get all users](https://www.hipchat.com/docs/apiv2/method/get_all_users)</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_users</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">req</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">UsersRequest</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Users</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">url</span> <span class="op">=</span> <span class="ident">Url</span>::<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}/user&quot;</span>, <span class="self">self</span>.<span class="ident">base_url</span>)).<span class="ident">unwrap</span>();
+        <span class="ident">req</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">users_request</span><span class="op">|</span> <span class="ident">users_request</span>.<span class="ident">append_to</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">url</span>.<span class="ident">query_pairs_mut</span>()));
 
-        <span class='kw'>if</span> <span class='ident'>res</span>.<span class='ident'>status</span>.<span class='ident'>class</span>() <span class='op'>!=</span> <span class='ident'>StatusClass</span>::<span class='ident'>Success</span> {
-            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>Error</span>::<span class='ident'>HttpStatus</span>(<span class='ident'>res</span>.<span class='ident'>status</span>));
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">hyper_client</span>.<span class="ident">get</span>(<span class="ident">url</span>)
+            .<span class="ident">header</span>(<span class="self">self</span>.<span class="ident">auth</span>.<span class="ident">to_owned</span>())
+            .<span class="ident">send</span>());
+
+        <span class="kw">if</span> <span class="ident">res</span>.<span class="ident">status</span>.<span class="ident">class</span>() <span class="op">!=</span> <span class="ident">StatusClass</span>::<span class="ident">Success</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">HttpStatus</span>(<span class="ident">res</span>.<span class="ident">status</span>));
         }
 
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>body</span> <span class='op'>=</span> <span class='ident'>String</span>::<span class='ident'>new</span>();
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>res</span>.<span class='ident'>read_to_string</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>body</span>));
-        <span class='kw'>let</span> <span class='ident'>user_detail</span>: <span class='ident'>UserDetail</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serde_json</span>::<span class='ident'>from_str</span>(<span class='kw-2'>&amp;</span><span class='ident'>body</span>));
-        <span class='prelude-val'>Ok</span>(<span class='ident'>user_detail</span>)
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">body</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
+        <span class="macro">try</span><span class="macro">!</span>(<span class="ident">res</span>.<span class="ident">read_to_string</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">body</span>));
+        <span class="kw">let</span> <span class="ident">users</span>: <span class="ident">Users</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">serde_json</span>::<span class="ident">from_str</span>(<span class="kw-2">&amp;</span><span class="ident">body</span>));
+        <span class="prelude-val">Ok</span>(<span class="ident">users</span>)
+    }
+    <span class="doccomment">/// [Get user](https://www.hipchat.com/docs/apiv2/method/view_user)</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_user</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">user_id_or_name</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">UserDetail</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">hyper_client</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}/user/{}&quot;</span>, <span class="self">self</span>.<span class="ident">base_url</span>, <span class="ident">user_id_or_name</span>.<span class="ident">as_ref</span>()))
+            .<span class="ident">header</span>(<span class="self">self</span>.<span class="ident">auth</span>.<span class="ident">to_owned</span>())
+            .<span class="ident">send</span>());
+
+        <span class="kw">if</span> <span class="ident">res</span>.<span class="ident">status</span>.<span class="ident">class</span>() <span class="op">!=</span> <span class="ident">StatusClass</span>::<span class="ident">Success</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">HttpStatus</span>(<span class="ident">res</span>.<span class="ident">status</span>));
+        }
+
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">body</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
+        <span class="macro">try</span><span class="macro">!</span>(<span class="ident">res</span>.<span class="ident">read_to_string</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">body</span>));
+        <span class="kw">let</span> <span class="ident">user_detail</span>: <span class="ident">UserDetail</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">serde_json</span>::<span class="ident">from_str</span>(<span class="kw-2">&amp;</span><span class="ident">body</span>));
+        <span class="prelude-val">Ok</span>(<span class="ident">user_detail</span>)
     }
 }
 </pre>
@@ -534,7 +572,6 @@
         window.rootPath = "../../";
         window.currentCrate = "hipchat_client";
     </script>
-    <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     <script defer src="../../search-index.js"></script>
 </body>

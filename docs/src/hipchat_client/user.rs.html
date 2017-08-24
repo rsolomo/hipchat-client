@@ -17,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc source">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -43,7 +43,7 @@
         </form>
     </nav>
 
-    <section id='main' class="content source"><pre class="line-numbers"><span id="1">  1</span>
+    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -199,161 +199,161 @@
 <span id="154">154</span>
 <span id="155">155</span>
 <span id="156">156</span>
-</pre><pre class='rust '>
-<span class='kw'>use</span> <span class='ident'>util</span>::<span class='ident'>AppendToQueryParams</span>;
-<span class='kw'>use</span> <span class='ident'>url</span>::<span class='ident'>UrlQuery</span>;
-<span class='kw'>use</span> <span class='ident'>url</span>::<span class='ident'>form_urlencoded</span>::<span class='ident'>Serializer</span>;
+</pre><pre class="rust ">
+<span class="kw">use</span> <span class="ident">util</span>::<span class="ident">AppendToQueryParams</span>;
+<span class="kw">use</span> <span class="ident">url</span>::<span class="ident">UrlQuery</span>;
+<span class="kw">use</span> <span class="ident">url</span>::<span class="ident">form_urlencoded</span>::<span class="ident">Serializer</span>;
 
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Hash</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>UsersRequest</span> {
-    <span class='kw'>pub</span> <span class='ident'>start_index</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>u64</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>max_results</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>u64</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>include_guests</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>bool</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>include_deleted</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>bool</span><span class='op'>&gt;</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Hash</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UsersRequest</span> {
+    <span class="kw">pub</span> <span class="ident">start_index</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">max_results</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">include_guests</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">include_deleted</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>
 }
 
-<span class='kw'>impl</span> <span class='ident'>Default</span> <span class='kw'>for</span> <span class='ident'>UsersRequest</span> {
-    <span class='kw'>fn</span> <span class='ident'>default</span>() <span class='op'>-&gt;</span> <span class='self'>Self</span> {
-        <span class='ident'>UsersRequest</span> {
-            <span class='ident'>start_index</span>: <span class='prelude-val'>Some</span>(<span class='number'>0</span>),
-            <span class='ident'>max_results</span>: <span class='prelude-val'>Some</span>(<span class='number'>100</span>),
-            <span class='ident'>include_guests</span>: <span class='prelude-val'>Some</span>(<span class='bool-val'>false</span>),
-            <span class='ident'>include_deleted</span>: <span class='prelude-val'>Some</span>(<span class='bool-val'>false</span>),
+<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">UsersRequest</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="ident">UsersRequest</span> {
+            <span class="ident">start_index</span>: <span class="prelude-val">Some</span>(<span class="number">0</span>),
+            <span class="ident">max_results</span>: <span class="prelude-val">Some</span>(<span class="number">100</span>),
+            <span class="ident">include_guests</span>: <span class="prelude-val">Some</span>(<span class="bool-val">false</span>),
+            <span class="ident">include_deleted</span>: <span class="prelude-val">Some</span>(<span class="bool-val">false</span>),
         }
     }
 }
 
-<span class='kw'>impl</span> <span class='ident'>AppendToQueryParams</span> <span class='kw'>for</span> <span class='ident'>UsersRequest</span> {
-    <span class='kw'>fn</span> <span class='ident'>append_to</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>query</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Serializer</span><span class='op'>&lt;</span><span class='ident'>UrlQuery</span><span class='op'>&gt;</span>){
-        <span class='self'>self</span>.<span class='ident'>start_index</span>.<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>start_index</span><span class='op'>|</span> <span class='ident'>query</span>.<span class='ident'>append_pair</span>(<span class='string'>&quot;start-index&quot;</span>, <span class='kw-2'>&amp;</span><span class='ident'>start_index</span>.<span class='ident'>to_string</span>()));
-        <span class='self'>self</span>.<span class='ident'>max_results</span>.<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>max_results</span><span class='op'>|</span> <span class='ident'>query</span>.<span class='ident'>append_pair</span>(<span class='string'>&quot;max-results&quot;</span>, <span class='kw-2'>&amp;</span><span class='ident'>max_results</span>.<span class='ident'>to_string</span>()));
-        <span class='self'>self</span>.<span class='ident'>include_guests</span>.<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>include_guests</span><span class='op'>|</span> <span class='ident'>query</span>.<span class='ident'>append_pair</span>(<span class='string'>&quot;include-guests&quot;</span>, <span class='kw-2'>&amp;</span><span class='ident'>include_guests</span>.<span class='ident'>to_string</span>()));
-        <span class='self'>self</span>.<span class='ident'>include_deleted</span>.<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>include_deleted</span><span class='op'>|</span> <span class='ident'>query</span>.<span class='ident'>append_pair</span>(<span class='string'>&quot;include-deleted&quot;</span>, <span class='kw-2'>&amp;</span><span class='ident'>include_deleted</span>.<span class='ident'>to_string</span>()));
+<span class="kw">impl</span> <span class="ident">AppendToQueryParams</span> <span class="kw">for</span> <span class="ident">UsersRequest</span> {
+    <span class="kw">fn</span> <span class="ident">append_to</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">query</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Serializer</span><span class="op">&lt;</span><span class="ident">UrlQuery</span><span class="op">&gt;</span>){
+        <span class="self">self</span>.<span class="ident">start_index</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">start_index</span><span class="op">|</span> <span class="ident">query</span>.<span class="ident">append_pair</span>(<span class="string">&quot;start-index&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">start_index</span>.<span class="ident">to_string</span>()));
+        <span class="self">self</span>.<span class="ident">max_results</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">max_results</span><span class="op">|</span> <span class="ident">query</span>.<span class="ident">append_pair</span>(<span class="string">&quot;max-results&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">max_results</span>.<span class="ident">to_string</span>()));
+        <span class="self">self</span>.<span class="ident">include_guests</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">include_guests</span><span class="op">|</span> <span class="ident">query</span>.<span class="ident">append_pair</span>(<span class="string">&quot;include-guests&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">include_guests</span>.<span class="ident">to_string</span>()));
+        <span class="self">self</span>.<span class="ident">include_deleted</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">include_deleted</span><span class="op">|</span> <span class="ident">query</span>.<span class="ident">append_pair</span>(<span class="string">&quot;include-deleted&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">include_deleted</span>.<span class="ident">to_string</span>()));
     }
 }
 
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Clone</span>, <span class='ident'>Hash</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Deserialize</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>UsersLinks</span> {
-    <span class='attribute'>#[<span class='ident'>serde</span>(<span class='ident'>rename</span> <span class='op'>=</span> <span class='string'>&quot;self&quot;</span>)]</span>
-    <span class='kw'>pub</span> <span class='ident'>self_</span>: <span class='ident'>String</span>,
-    <span class='kw'>pub</span> <span class='ident'>prev</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>next</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Hash</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UsersLinks</span> {
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;self&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">self_</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">prev</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">next</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>
 }
 
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Hash</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Deserialize</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Users</span> {
-    <span class='attribute'>#[<span class='ident'>serde</span>(<span class='ident'>rename</span> <span class='op'>=</span> <span class='string'>&quot;startIndex&quot;</span>)]</span>
-    <span class='kw'>pub</span> <span class='ident'>start_index</span>: <span class='ident'>u64</span>,
-    <span class='attribute'>#[<span class='ident'>serde</span>(<span class='ident'>rename</span> <span class='op'>=</span> <span class='string'>&quot;maxResults&quot;</span>)]</span>
-    <span class='kw'>pub</span> <span class='ident'>max_results</span>: <span class='ident'>u64</span>,
-    <span class='kw'>pub</span> <span class='ident'>items</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>User</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>links</span>: <span class='ident'>UsersLinks</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Hash</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Users</span> {
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;startIndex&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">start_index</span>: <span class="ident">u64</span>,
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;maxResults&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">max_results</span>: <span class="ident">u64</span>,
+    <span class="kw">pub</span> <span class="ident">items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">User</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">links</span>: <span class="ident">UsersLinks</span>
 }
 
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Clone</span>, <span class='ident'>Hash</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Deserialize</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>User</span> {
-    <span class='kw'>pub</span> <span class='ident'>name</span>: <span class='ident'>String</span>,
-    <span class='kw'>pub</span> <span class='ident'>mention_name</span>: <span class='ident'>String</span>,
-    <span class='kw'>pub</span> <span class='ident'>id</span>: <span class='ident'>u64</span>,
-    <span class='kw'>pub</span> <span class='ident'>links</span>: <span class='ident'>UserDetailLinks</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Hash</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">User</span> {
+    <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">mention_name</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">u64</span>,
+    <span class="kw">pub</span> <span class="ident">links</span>: <span class="ident">UserDetailLinks</span>
 }
 
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Clone</span>, <span class='ident'>Hash</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Deserialize</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>UserClient</span> {
-    <span class='kw'>pub</span> <span class='ident'>version</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>client_type</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>,
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Hash</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UserClient</span> {
+    <span class="kw">pub</span> <span class="ident">version</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">client_type</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 }
 
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Clone</span>, <span class='ident'>Hash</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Deserialize</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>UserPresence</span> {
-    <span class='kw'>pub</span> <span class='ident'>status</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>idle</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>u64</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>show</span>: <span class='ident'>String</span>,
-    <span class='kw'>pub</span> <span class='ident'>client</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>UserClient</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>is_online</span>: <span class='ident'>bool</span>,
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Hash</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UserPresence</span> {
+    <span class="kw">pub</span> <span class="ident">status</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">idle</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">show</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">client</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">UserClient</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">is_online</span>: <span class="ident">bool</span>,
 }
 
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Clone</span>, <span class='ident'>Hash</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Deserialize</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>UserDetail</span> {
-    <span class='kw'>pub</span> <span class='ident'>id</span>: <span class='ident'>u64</span>,
-    <span class='kw'>pub</span> <span class='ident'>xmpp_jid</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>name</span>: <span class='ident'>String</span>,
-    <span class='kw'>pub</span> <span class='ident'>mention_name</span>: <span class='ident'>String</span>,
-    <span class='kw'>pub</span> <span class='ident'>email</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>title</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>timezone</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>photo_url</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>presence</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>UserPresence</span><span class='op'>&gt;</span>,
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Hash</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UserDetail</span> {
+    <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">u64</span>,
+    <span class="kw">pub</span> <span class="ident">xmpp_jid</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">mention_name</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">email</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">title</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">timezone</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">photo_url</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">presence</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">UserPresence</span><span class="op">&gt;</span>,
 
-    <span class='kw'>pub</span> <span class='ident'>is_deleted</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>bool</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>is_guest</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>bool</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>is_group_admin</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>bool</span><span class='op'>&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">is_deleted</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">is_guest</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">is_group_admin</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>,
 
-    <span class='kw'>pub</span> <span class='ident'>created</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>last_active</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>,
-    <span class='kw'>pub</span> <span class='ident'>links</span>: <span class='ident'>UserDetailLinks</span>,
+    <span class="kw">pub</span> <span class="ident">created</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">last_active</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">links</span>: <span class="ident">UserDetailLinks</span>,
 }
 
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Clone</span>, <span class='ident'>Hash</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Deserialize</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>UserDetailLinks</span> {
-    <span class='attribute'>#[<span class='ident'>serde</span>(<span class='ident'>rename</span> <span class='op'>=</span> <span class='string'>&quot;self&quot;</span>)]</span>
-    <span class='kw'>pub</span> <span class='ident'>self_</span>: <span class='ident'>String</span>,
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Hash</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UserDetailLinks</span> {
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;self&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">self_</span>: <span class="ident">String</span>,
 }
 
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Hash</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Deserialize</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>UserMessage</span> {
-    <span class='kw'>pub</span> <span class='ident'>id</span>: <span class='ident'>String</span>,
-    <span class='kw'>pub</span> <span class='ident'>timestamp</span>: <span class='ident'>String</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Hash</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UserMessage</span> {
+    <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">timestamp</span>: <span class="ident">String</span>
 }
 
 
-<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
-<span class='kw'>mod</span> <span class='ident'>test</span> {
-    <span class='kw'>use</span> <span class='kw'>super</span>::<span class='kw-2'>*</span>;
-    <span class='kw'>use</span> <span class='ident'>serde_json</span>::{<span class='self'>self</span>};
-    <span class='kw'>use</span> <span class='ident'>url</span>::<span class='ident'>Url</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">mod</span> <span class="ident">test</span> {
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use</span> <span class="ident">serde_json</span>::{<span class="self">self</span>};
+    <span class="kw">use</span> <span class="ident">url</span>::<span class="ident">Url</span>;
 
-    <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>unit_users_links</span>() {
-        <span class='kw'>let</span> <span class='ident'>expected</span> <span class='op'>=</span> <span class='ident'>UsersLinks</span> {
-            <span class='ident'>self_</span>: <span class='string'>&quot;https://www.example.com&quot;</span>.<span class='ident'>to_owned</span>(),
-            <span class='ident'>prev</span>: <span class='prelude-val'>Some</span>(<span class='string'>&quot;https://www.example.com&quot;</span>.<span class='ident'>to_owned</span>()),
-            <span class='ident'>next</span>: <span class='prelude-val'>Some</span>(<span class='string'>&quot;https://www.example.com&quot;</span>.<span class='ident'>to_owned</span>())
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">unit_users_links</span>() {
+        <span class="kw">let</span> <span class="ident">expected</span> <span class="op">=</span> <span class="ident">UsersLinks</span> {
+            <span class="ident">self_</span>: <span class="string">&quot;https://www.example.com&quot;</span>.<span class="ident">to_owned</span>(),
+            <span class="ident">prev</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;https://www.example.com&quot;</span>.<span class="ident">to_owned</span>()),
+            <span class="ident">next</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;https://www.example.com&quot;</span>.<span class="ident">to_owned</span>())
         };
-        <span class='kw'>let</span> <span class='ident'>actual</span>: <span class='ident'>UsersLinks</span> <span class='op'>=</span> <span class='ident'>serde_json</span>::<span class='ident'>from_str</span>(<span class='string'>r#&quot;{
+        <span class="kw">let</span> <span class="ident">actual</span>: <span class="ident">UsersLinks</span> <span class="op">=</span> <span class="ident">serde_json</span>::<span class="ident">from_str</span>(<span class="string">r#&quot;{
             &quot;self&quot;:&quot;https://www.example.com&quot;,
             &quot;prev&quot;:&quot;https://www.example.com&quot;,
             &quot;next&quot;:&quot;https://www.example.com&quot;
-        }&quot;#</span>).<span class='ident'>unwrap</span>();
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>actual</span>, <span class='ident'>expected</span>);
+        }&quot;#</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">actual</span>, <span class="ident">expected</span>);
     }
 
-    <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>unit_default_users_request_should_create_empty_params</span>(){
-        <span class='kw'>let</span> <span class='ident'>users_request</span> <span class='op'>=</span> <span class='ident'>UsersRequest</span>{ <span class='ident'>start_index</span>: <span class='prelude-val'>None</span>,
-                                          <span class='ident'>max_results</span>: <span class='prelude-val'>None</span>,
-                                          <span class='ident'>include_guests</span>: <span class='prelude-val'>None</span>,
-                                          <span class='ident'>include_deleted</span>: <span class='prelude-val'>None</span> };
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">unit_default_users_request_should_create_empty_params</span>(){
+        <span class="kw">let</span> <span class="ident">users_request</span> <span class="op">=</span> <span class="ident">UsersRequest</span>{ <span class="ident">start_index</span>: <span class="prelude-val">None</span>,
+                                          <span class="ident">max_results</span>: <span class="prelude-val">None</span>,
+                                          <span class="ident">include_guests</span>: <span class="prelude-val">None</span>,
+                                          <span class="ident">include_deleted</span>: <span class="prelude-val">None</span> };
 
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>url</span> <span class='op'>=</span> <span class='ident'>Url</span>::<span class='ident'>parse</span>(<span class='string'>&quot;https://rsolomo.github.io/hipchat-client/hipchat_client/index.html&quot;</span>).<span class='ident'>unwrap</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">url</span> <span class="op">=</span> <span class="ident">Url</span>::<span class="ident">parse</span>(<span class="string">&quot;https://rsolomo.github.io/hipchat-client/hipchat_client/index.html&quot;</span>).<span class="ident">unwrap</span>();
 
-        <span class='ident'>users_request</span>.<span class='ident'>append_to</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>url</span>.<span class='ident'>query_pairs_mut</span>());
+        <span class="ident">users_request</span>.<span class="ident">append_to</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">url</span>.<span class="ident">query_pairs_mut</span>());
 
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='prelude-val'>Some</span>(<span class='string'>&quot;&quot;</span>), <span class='ident'>url</span>.<span class='ident'>query</span>());
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>), <span class="ident">url</span>.<span class="ident">query</span>());
     }
 
-    <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>unit_populated_users_request_should_create_encoded_params</span>(){
-        <span class='kw'>let</span> <span class='ident'>users_request</span> <span class='op'>=</span> <span class='ident'>UsersRequest</span>{ <span class='ident'>start_index</span>: <span class='prelude-val'>Some</span>(<span class='number'>1</span>),
-                                          <span class='ident'>max_results</span>: <span class='prelude-val'>Some</span>(<span class='number'>10</span>),
-                                          <span class='ident'>include_guests</span>: <span class='prelude-val'>Some</span>(<span class='bool-val'>true</span>),
-                                          <span class='ident'>include_deleted</span>: <span class='prelude-val'>Some</span>(<span class='bool-val'>true</span>) };
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">unit_populated_users_request_should_create_encoded_params</span>(){
+        <span class="kw">let</span> <span class="ident">users_request</span> <span class="op">=</span> <span class="ident">UsersRequest</span>{ <span class="ident">start_index</span>: <span class="prelude-val">Some</span>(<span class="number">1</span>),
+                                          <span class="ident">max_results</span>: <span class="prelude-val">Some</span>(<span class="number">10</span>),
+                                          <span class="ident">include_guests</span>: <span class="prelude-val">Some</span>(<span class="bool-val">true</span>),
+                                          <span class="ident">include_deleted</span>: <span class="prelude-val">Some</span>(<span class="bool-val">true</span>) };
 
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>url</span> <span class='op'>=</span> <span class='ident'>Url</span>::<span class='ident'>parse</span>(<span class='string'>&quot;https://rsolomo.github.io/hipchat-client/hipchat_client/index.html&quot;</span>).<span class='ident'>unwrap</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">url</span> <span class="op">=</span> <span class="ident">Url</span>::<span class="ident">parse</span>(<span class="string">&quot;https://rsolomo.github.io/hipchat-client/hipchat_client/index.html&quot;</span>).<span class="ident">unwrap</span>();
 
-        <span class='ident'>users_request</span>.<span class='ident'>append_to</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>url</span>.<span class='ident'>query_pairs_mut</span>());
+        <span class="ident">users_request</span>.<span class="ident">append_to</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">url</span>.<span class="ident">query_pairs_mut</span>());
 
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='prelude-val'>Some</span>(<span class='string'>&quot;start-index=1&amp;max-results=10&amp;include-guests=true&amp;include-deleted=true&quot;</span>), <span class='ident'>url</span>.<span class='ident'>query</span>());
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">Some</span>(<span class="string">&quot;start-index=1&amp;max-results=10&amp;include-guests=true&amp;include-deleted=true&quot;</span>), <span class="ident">url</span>.<span class="ident">query</span>());
     }
 }
 </pre>
@@ -414,7 +414,6 @@
         window.rootPath = "../../";
         window.currentCrate = "hipchat_client";
     </script>
-    <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     <script defer src="../../search-index.js"></script>
 </body>
