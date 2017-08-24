@@ -1,6 +1,6 @@
 [package]
 name = "hipchat-client"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["Ray Solomon <raybsolomon@gmail.com>"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
